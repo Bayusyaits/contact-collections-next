@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "bayu-syaits-api",
+  "builds": [
+    {
+      "src": "./server.app.ts",
+      "use": "@now/node-server"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/app/graphql",
+      "dest": "server.app.ts"
+    }
+  ]
+}

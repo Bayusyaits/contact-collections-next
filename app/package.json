@@ -1,0 +1,93 @@
+{
+  "name": "contact-collections-next",
+  "version": "0.1.1",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3003",
+    "build": "next build -p 3003",
+    "start": "next start",
+    "lint": "next lint",
+    "check-types": "tsc --pretty --noEmit",
+    "check-format": "prettier --check .",
+    "check-lint": "eslint . --ext ts --ext tsx --ext js",
+    "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx,json}'",
+    "test": "yarn lint-staged && yarn check-lint && yarn check-types",
+    "format": "prettier --write .",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^4.0.0",
+    "@apollo/react-ssr": "^4.0.0",
+    "@emotion/css": "^11.11.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@hookform/resolvers": "^3.1.1",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.14.2",
+    "@types/node": "20.4.5",
+    "@types/react": "18.2.17",
+    "@types/react-dom": "18.2.7",
+    "apollo-boost": "^0.4.9",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link-http": "^1.5.17",
+    "crypto-hash": "^2.0.1",
+    "dotenv": "^16.3.1",
+    "graphql": "^16.7.1",
+    "graphql-tag": "^2.12.6",
+    "immer": "9.0.16",
+    "localforage": "^1.10.0",
+    "lodash": "^4.17.21",
+    "next": "^13.3.2",
+    "next-offline": "^5.0.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.45.2",
+    "typescript": "5.1.6",
+    "uuid": "^7.0.3",
+    "yup": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/lodash.clonedeep": "^4.5.7",
+    "@types/lodash.merge": "^4.6.7",
+    "@types/uuid": "^9.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "8.46.0",
+    "eslint-config-next": "13.4.12",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-import-resolver-babel-module": "~5.2.0",
+    "eslint-import-resolver-typescript": "^3.3.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.30.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-sonarjs": "~0.10.0",
+    "husky": "^8.0.3",
+    "react-hot-loader": "^4.13.1",
+    "url-loader": "^4.1.1"
+  },
+  "resolutions": {
+    "@apollo/react-components": "4.0.0",
+    "@apollo/react-hooks": "4.0.0",
+    "@apollo/react-ssr": "4.0.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "npx prettier --write"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

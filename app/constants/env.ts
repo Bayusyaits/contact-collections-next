@@ -1,0 +1,1 @@
+export const userUuid = process.env.REACT_USER_UUID || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
