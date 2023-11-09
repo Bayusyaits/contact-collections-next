@@ -1,21 +1,21 @@
 import { v4 } from "uuid";
-import Args, { BookCollectionResponse } from "./args";
+import Args, { PhoneNumberResponse } from "./args";
 import { AppDataSource } from "../../data-source"
-import { BookCollection as BookCollectionEntity } from "./entity";
+import { PhoneNumber as PhoneNumberEntity } from "./entity";
 import { filterItems } from "../../helpers/filter";
 
 // Provide resolver functions for your schema fields
 export const Query = {
-  getBookCollection: async (_: any, args: any) => {
+  getPhoneNumber: async (_: any, args: any) => {
     const { uuid } = args;
     if (!uuid) {
       return {}
     }
-    const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+    const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
     return await bookCollectionEntity.findOne({ where: { uuid: uuid } });
   },
-  getBookCollections: async (_: any, args: Args): Promise<BookCollectionResponse> => {
-    const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+  getPhoneNumbers: async (_: any, args: Args): Promise<PhoneNumberResponse> => {
+    const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
     const { offset = 0, limit = 10, uuid, orderBy } = args;
     const where = {}
     const order = {}
@@ -27,11 +27,6 @@ export const Query = {
     // if (bookUuid) {
     //   Object.assign(where, bookUuid: {
     //     uuid: bookUuid
-    //   })
-    // }
-    // if (collectionUuid) {
-    //   Object.assign(where, collectionUuid: {
-    //     uuid: collectionUuid
     //   })
     // }
     if (orderBy) {
@@ -52,7 +47,7 @@ export const Query = {
       '',
       ''
     );
-    const res = new BookCollectionResponse({
+    const res = new PhoneNumberResponse({
       total: total,
       ...filteredData,
     })
@@ -65,41 +60,38 @@ export const Query = {
 }
 
 export const Mutation = {
-  addBookCollection: async (_: any, args: any) => {
+  addPhoneNumber: async (_: any, args: any) => {
     try {
-      const { userUuid, bookUuid, collectionUuid } = args;
+      const { userUuid, bookUuid, phoneNumber } = args;
       console.log('userUuid', userUuid)
-      const bookCollection = new BookCollectionEntity()
+      const bookCollection = new PhoneNumberEntity()
       bookCollection.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
       bookCollection.uuid = v4()
       bookCollection.bookUuid = bookUuid
-      bookCollection.collectionUuid = collectionUuid
-      const bookCollectionRepository = AppDataSource.getRepository(BookCollectionEntity)
+      bookCollection.phoneNumber = phoneNumber
+      const bookCollectionRepository = AppDataSource.getRepository(PhoneNumberEntity)
       return await bookCollectionRepository.save(bookCollection);
     } catch (error) {
       return false;
     }
   },
-  bulkBookCollection: async (_: any, args: any) => {
+  bulkPhoneNumber: async (_: any, args: any) => {
     try {
       let arr = []
-      const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
       try {
         const { payload } = args;
         for (let i = 0; i < payload.length; i++) {
           const val = payload[i] || null
-          if (!val?.collectionUuid?.uuid || !val?.bookUuid || !val?.userUuid) {
+          if (!val?.phoneNumber || !val?.bookUuid || !val?.userUuid) {
             continue;
           }
-          const collectionUuid = val?.collectionUuid?.uuid || val?.collectionUuid
           const el = {
             userUuid: val.userUuid,
             bookUuid: {
               uuid: val.bookUuid
             },
-            collectionUuid: {
-              uuid: collectionUuid
-            }
+            phoneNumber: val.phoneNumber
           }
           const check =  await bookCollectionEntity.findOne({ 
             where: {...el},
@@ -108,22 +100,22 @@ export const Mutation = {
             },
           });
           if (!check) {
-            const res = await Mutation.addBookCollection('', {
+            const res = await Mutation.addPhoneNumber('', {
               userUuid: val.userUuid,
               bookUuid: val.bookUuid,
-              collectionUuid: collectionUuid
+              phoneNumber: val.phoneNumber
             })
             arr.push(res)
           } else if (check && check?.uuid && val?.action === 'delete') {
-            await Mutation.deleteBookCollection('', {
+            await Mutation.deletePhoneNumber('', {
               userUuid: val.userUuid,
               uuid: check.uuid
             })
           } else if (check && val?.action === 'edit' && val?.uuid) {
-            const res = await Mutation.editBookCollection('', {
+            const res = await Mutation.editPhoneNumber('', {
               userUuid: val.userUuid,
               bookUuid: val.bookUuid,
-              collectionUuid,
+              phoneNumber: val.phoneNumber,
               uuid: val.uuid
             })
             arr.push(res)
@@ -141,30 +133,24 @@ export const Mutation = {
       return false;
     }
   },
-  addBulkBookCollection: async (_: any, args: any) => {
+  addBulkPhoneNumber: async (_: any, args: any) => {
     try {
       let arr = []
       try {
-        const { collections, books, userUuid } = args;
-        if (collections && Array.isArray(collections) && collections.length &&
+        const { phoneNumber, books, userUuid } = args;
+        if (phoneNumber && phoneNumber.length &&
           books && Array.isArray(books) && books.length && userUuid) {
-          const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+          const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
           for (let i = 0; i < books.length; i++) {
             if (!books[i]) {
               continue;
             }
-            for (let k = 0; k < collections.length; k++) {
-              if (!collections[k]) {
-                continue;
-              }
               const el = {
                 userUuid: userUuid,
                 bookUuid: {
                   uuid: books[i]
                 },
-                collectionUuid: {
-                  uuid: collections[k]
-                }
+                phoneNumber
               }
               const check =  await bookCollectionEntity.findOne({ 
                 where: {...el},
@@ -173,17 +159,16 @@ export const Mutation = {
                 },
               });
               if (!check) {
-                const res = await Mutation.addBookCollection('', {
+                const res = await Mutation.addPhoneNumber('', {
                   userUuid: userUuid,
                   bookUuid: books[i],
-                  collectionUuid: collections[k]
+                  phoneNumber
                 })
                 arr.push(res)
               } else {
                 continue;
               }
             }
-          }
         }
         return arr
       } catch (error) {
@@ -193,10 +178,10 @@ export const Mutation = {
       return false;
     }
   },
-  editBookCollection: async (_: any, args: any) => {
+  editPhoneNumber: async (_: any, args: any) => {
     try {
-      const { userUuid, uuid, bookUuid, collectionUuid } = args;
-      const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+      const { userUuid, uuid, bookUuid, phoneNumber } = args;
+      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
       const bookCollection = await bookCollectionEntity.findOneBy({
         uuid: uuid,
         userUuid: userUuid
@@ -207,18 +192,18 @@ export const Mutation = {
       if (bookUuid) {
         bookCollection.bookUuid = bookUuid
       }
-      if (collectionUuid) {
-        bookCollection.collectionUuid = collectionUuid
+      if (phoneNumber) {
+        bookCollection.phoneNumber = phoneNumber
       }
       return await bookCollectionEntity.save(bookCollection);
     } catch (error) {
       return {};
     }
   },
-  deleteBookCollection: async (_: any, args: any) => {
+  deletePhoneNumber: async (_: any, args: any) => {
     try {
       const { uuid, userUuid } = args;
-      const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
       const bookCollection = await bookCollectionEntity.findOneBy({
         uuid: uuid,
         userUuid: userUuid

@@ -3,11 +3,11 @@ import { useMutation } from '@apollo/react-hooks';
 import { useQuery } from '@apollo/client';
 
 import BookListModalDeleteContactView from "./BookListModalDeleteContactView";
-import { GET_LIST_BOOKS, DELETE_BOOK } from "queries/book/queries";
+import { GET_LIST_BOOKS, GET_BOOKS, DELETE_BOOK } from "queries/book/queries";
 
 type Props = {
   onFinish: (payload: any) => void
-  sortBy?: string,
+  orderBy?: string,
   payload: Payload,
   onClose: () => void
 };
@@ -20,7 +20,7 @@ type Payload = {
 }
 const BookListModalDeleteContainer = (props: Props) => {
   const {
-    sortBy = 'createdDate',
+    orderBy = 'createdDate',
     payload,
     onFinish,
     onClose
@@ -32,7 +32,7 @@ const BookListModalDeleteContainer = (props: Props) => {
   const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
     fetchPolicy: "no-cache",
     variables: {
-      sortBy,
+      orderBy,
       slug
     },
   }) 
@@ -40,8 +40,8 @@ const BookListModalDeleteContainer = (props: Props) => {
   const [deleteBook] = useMutation(DELETE_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
-      GET_LIST_BOOKS, // DocumentNode object parsed with gql
-      'getListBooks' // Query fullName
+      GET_BOOKS, // DocumentNode object parsed with gql
+      'getBooks' // Query fullName
     ],
   });
   useEffect(() => {

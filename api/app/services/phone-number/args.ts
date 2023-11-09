@@ -21,7 +21,7 @@ export default class Args {
   userUuid?: string;
 }
 
-export class BookCollection {
+export class PhoneNumber {
     @Field()
     id: number;
   
@@ -36,9 +36,9 @@ export class BookCollection {
   }
   
 @ObjectType()
-export class BookCollectionResponse extends PaginatedResponse(BookCollection) {
-  constructor(bookBookCollectionResponse: BookCollectionResponse) {
+export class PhoneNumberResponse extends PaginatedResponse(PhoneNumber) {
+  constructor(bookPhoneNumberResponse: PhoneNumberResponse) {
     super();
-    Object.assign(this, bookBookCollectionResponse);
+    Object.assign(this, bookPhoneNumberResponse);
   }
 }

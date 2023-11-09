@@ -10,14 +10,14 @@ import { GET_LIST_COLLECTIONS } from "queries/collection/queries";
 
 const BookListModalContainer = (props: Props) => {
   const {
-    sortBy = 'id',
+    orderBy = 'createdDate',
     onFinish,
     onSwitch
   } = props
   const [list, setList] = useState([])
   const { loading, error, data } = useQuery(GET_LIST_COLLECTIONS, {
     variables: {
-      sortBy,
+      orderBy,
       slug: ''
     },
   }) 

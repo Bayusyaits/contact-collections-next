@@ -1,7 +1,7 @@
 // Construct a schema, using GraphQL schema language
 export const typeDefs = `
   extend type Query {
-    getBookCategories(
+    getPhoneNumbers(
       uuid: String!
       search: String
       orderBy: String
@@ -9,46 +9,57 @@ export const typeDefs = `
       userUuid: String
       offset: Int
       limit: Int
-    ): PaginateBookCategory
-    getBookCategory(uuid: String!): BookCategory
+    ): PaginatePhoneNumber
+    getPhoneNumber(uuid: String!): PhoneNumber
   }
   extend type Mutation {
-    addBookCategory(
+    addPhoneNumber(
       bookUuid: String!
-      categoryUuid: String!
+      phoneNumber: String!
       userUuid: String!
-    ): BookCategory!
-    addBulkBookCategory(
-      categories: [String]
+    ): PhoneNumber!
+    addBulkPhoneNumber(
+      phoneNumber: String
       books: [String]
       userUuid: String
-    ): [BookCategory!]!
-    editBookCategory(
+    ): [PhoneNumber!]!
+    bulkPhoneNumber(
+      payload: [PayloadBulkPhoneNumber!]!
+    ): [PhoneNumber]
+    editPhoneNumber(
       bookUuid: String!
-      categoryUuid: String!
+      phoneNumber: String!
       userUuid: String!
       uuid: String!
-    ): BookCategory!
-    deleteBookCategory(
+    ): PhoneNumber!
+    deletePhoneNumber(
       uuid: String!
       userUuid: String!
     ): Boolean!
   }
 
-  type PaginateBookCategory {
+  type PaginatePhoneNumber {
     hasMore: Boolean
-    items: [BookCategory!]!
+    items: [PhoneNumber!]!
     offset: Int
     page: Int
     limit: Int
     total: Int
   }
 
-  type BookCategory {
+  type PhoneNumber {
     id: Int
     bookUuid: Book
-    categoryUuid: Category
+    phoneNumber: String
     uuid: String
     userUuid: String
+  }
+
+  input PayloadBulkPhoneNumber {
+    bookUuid: String!
+    uuid: String
+    phoneNumber: String
+    action: String!
+    userUuid: String!
   }
 `;

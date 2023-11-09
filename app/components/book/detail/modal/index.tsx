@@ -14,20 +14,20 @@ import { GET_BOOK_ITEMS } from "queries/book/queries";
 type Props = {
   onFinish: () => void
   field: any,
-  sortBy?: string,
+  orderBy?: string,
   onSwitch: () => void
 };
 
 const BookDetailModalContainer = (props: Props) => {
   const {
     field,
-    sortBy = 'id',
+    orderBy = 'id',
     onSwitch
   } = props
   const [payload, setPayload] = useState<any>([])
   const { loading, error, data } = useQuery(GET_LIST_COLLECTIONS, {
     variables: {
-      sortBy,
+      orderBy,
       slug: ''
     },
   }) 

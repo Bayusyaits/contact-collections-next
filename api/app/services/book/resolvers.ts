@@ -1,5 +1,5 @@
-import { isEmpty } from "lodash";
 import { v4 } from "uuid"
+import {Raw} from "typeorm";
 import Args, { BookResponse } from "./args";
 import { AppDataSource } from "../../data-source"
 import { Book as BookEntity } from "./entity";
@@ -18,7 +18,8 @@ export const Query = {
     return await bookEntity.findOne({ 
       relations: {
         bookCollections: true,
-        bookCategories: true
+        bookCategories: true,
+        phoneNumbers: true
       },
       where: { 
         slug: setSpaceToDash(slug)
@@ -26,7 +27,7 @@ export const Query = {
     });
   },
   getListBooks: async (_: any, args: any) => {
-    const { slug, sortBy } = args;
+    const { slug, orderBy } = args;
     const where = {}
     const order = {}
     if (slug) {
@@ -34,9 +35,9 @@ export const Query = {
         slug
       })
     }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
     }
     const bookEntity = AppDataSource.getRepository(BookEntity)
@@ -44,40 +45,34 @@ export const Query = {
   },
   getBooks: async (_: any, args: Args): Promise<BookResponse> => {
     const bookEntity = AppDataSource.getRepository(BookEntity)
-    const { offset = 0, limit = 10, slug, type, sortBy } = args;
+    const { offset = 0, limit = 10, slug, type, orderBy } = args;
     const where = {}
     const order = {}
     if (slug) {
       Object.assign(where, {
-        slug
+        slug: Raw((alias) => `${alias} LIKE :slug`, { slug: `%${slug}%` })
       })
     }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
-    }
-    const obj = {}
-    if (order && !isEmpty(order)) {
-      Object.assign(obj, order)
-    }
-    if (where && !isEmpty(where)) {
-      Object.assign(obj, where)
     }
     const [data, total] = await bookEntity.findAndCount({
       relations: {
-          bookCollections: true,
-          bookCategories: true
+        bookCollections: true,
+        bookCategories: true,
+        phoneNumbers: true
       },
       where,
-      take: 10,
-      skip: 0
+      order,
+      take: limit,
+      skip: offset
     })
     const filteredData = filterItems(
       data,
       limit,
       offset,
-      slug,
       type
     );
     const res = new BookResponse({
@@ -95,64 +90,57 @@ export const Query = {
 export const Mutation = {
   addBook: async (_: any, args: any) => {
     try {
-      try {
-        const generate = Math.floor(generateKey(100))
-        const { 
-          payload: {
-            fullName, image, type, address, email, phoneNumber,
-            status, description, gallery, userUuid, slug
-          }
-        } = args;
-        const book = new BookEntity()
-        book.uuid = v4()
-        if (address) {
-          book.address = address
+      const generate = Math.floor(generateKey(100))
+      const { 
+        payload: {
+          fullName, image, type, address, email,
+          status, description, gallery, userUuid, slug
         }
-        if (email) {
-          book.email = email
-        }
-        if (fullName) {
-          book.fullName = fullName
-        }
-        if (slug) {
-          book.slug = slug
-        } else {
-          book.slug = slugify(fullName) ? `${setSpaceToDash(slugify(fullName))}_${generate}` : 
-          `${setSpaceToDash(fullName)}_${generate}`  
-        }
-        if (userUuid) {
-          book.userUuid = userUuid
-        }
-        if (phoneNumber) {
-          book.phoneNumber = phoneNumber
-        }
-        if (type) {
-          book.type = type
-        }
-        if (description) {
-          book.description = description
-        }
-        if (status && ['offline','online'].includes(status)) {
-          book.status = status
-        }
-        if (gallery && Array.isArray(gallery)) {
-          book.gallery = gallery
-        }
-        book.image = image
-        const bookRepository = AppDataSource.getRepository(BookEntity)
-        return await bookRepository.save(book);
-      } catch (error) {
-        return {};
+      } = args;
+      const book = new BookEntity()
+      book.uuid = v4()
+      if (address) {
+        book.address = address
       }
+      if (email) {
+        book.email = email
+      }
+      if (fullName) {
+        book.fullName = fullName
+      }
+      if (slug) {
+        book.slug = slug
+      } else {
+        book.slug = slugify(fullName) ? `${setSpaceToDash(slugify(fullName))}_${generate}` : 
+        `${setSpaceToDash(fullName)}_${generate}`  
+      }
+      if (userUuid) {
+        book.userUuid = userUuid
+      }
+      if (type) {
+        book.type = type
+      }
+      if (description) {
+        book.description = description
+      }
+      if (status && ['offline','online'].includes(status)) {
+        book.status = status
+      }
+      if (gallery && Array.isArray(gallery)) {
+        book.gallery = gallery
+      }
+      book.image = image
+      const bookRepository = AppDataSource.getRepository(BookEntity)
+      return await bookRepository.save(book);
     } catch (error) {
-      return false;
+      return {};
     }
   },
   editBook: async (_: any, args: any) => {
     try {
       const { 
         payload: {
-          fullName, uuid, image, type, address, email, phoneNumber,
+          fullName, uuid, image, type, address, email,
           status, description, gallery, slug
         }
       } = args;      
@@ -177,9 +165,6 @@ export const Mutation = {
       }
       if (image) {
         book.image = image
-      }
-      if (phoneNumber) {
-        book.phoneNumber = phoneNumber
       }
       if (type) {
         book.type = type

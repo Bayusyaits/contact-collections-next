@@ -4,7 +4,7 @@ export const typeDefs = `
     getCategories(
       slug: String!
       search: String
-      sortBy: String
+      orderBy: String
       type: String
       offset: Int
       limit: Int
@@ -20,6 +20,7 @@ export const typeDefs = `
   type PaginateCategory {
     hasMore: Boolean
     items: [Category!]!
+    offset: Int
     page: Int
     limit: Int
     total: Int

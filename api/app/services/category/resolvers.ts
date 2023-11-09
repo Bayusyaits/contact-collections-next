@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { v4 } from "uuid";
 import Args, { CategoryResponse } from "./args";
 import { AppDataSource } from "../../data-source"
@@ -6,6 +5,7 @@ import { Category as CategoryEntity } from "./entity";
 import { filterItems } from "../../helpers/filter";
 import { generateKey, setSpaceToDash } from "../../helpers/mixins";
 import slugify from "../../helpers/slugify";
+import { Raw } from "typeorm";
 
 // Provide resolver functions for your schema fields
 export const Query = {
@@ -16,36 +16,30 @@ export const Query = {
   },
   getCategories: async (_: any, args: Args): Promise<CategoryResponse> => {
     const categoryEntity = AppDataSource.getRepository(CategoryEntity)
-    const { offset = 0, limit = 10, slug, type, sortBy } = args;
+    const { offset = 0, limit = 10, slug, type, orderBy } = args;
     const where = {}
     const order = {}
     if (slug) {
       Object.assign(where, {
-        slug
+        slug: Raw((alias) => `${alias} LIKE :slug`, { slug: `%${slug}%` })
       })
     }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
-    }
-    const obj = {}
-    if (order && !isEmpty(order)) {
-      Object.assign(obj, order)
-    }
-    if (where && !isEmpty(where)) {
-      Object.assign(obj, where)
     }
     const [data, total] = await categoryEntity.findAndCount({
-      ...obj,
-      take: 10,
-      skip: 0
+      where,
+      order,
+      take: limit,
+      skip: offset
     })
     const filteredData = filterItems(
       data,
       limit,
       offset,
-      slug,
+      // slug,
       type
     );
     const res = new CategoryResponse({
@@ -63,22 +57,18 @@ export const Query = {
 export const Mutation = {
   addCategory: async (_: any, args: any) => {
     try {
-      try {
-        const generate = Math.floor(generateKey(100))
-        const { name, icon } = args;
-        const category = new CategoryEntity()
-        category.name = name
-        category.uuid = v4()
-        category.slug = slugify(name) ? `${setSpaceToDash(slugify(name))}_${generate}` : 
-        `${setSpaceToDash(name)}_${generate}`
-        category.icon = icon
-        const categoryRepository = AppDataSource.getRepository(CategoryEntity)
-        return await categoryRepository.save(category);
-      } catch (error) {
-        return {};
-      }
+      const generate = Math.floor(generateKey(100))
+      const { name, icon } = args;
+      const category = new CategoryEntity()
+      category.name = name
+      category.uuid = v4()
+      category.slug = slugify(name) ? `${setSpaceToDash(slugify(name))}_${generate}` : 
+      `${setSpaceToDash(name)}_${generate}`
+      category.icon = icon
+      const categoryRepository = AppDataSource.getRepository(CategoryEntity)
+      return await categoryRepository.save(category);
     } catch (error) {
-      return false;
+      return {};
     }
   },
   editCategory: async (_: any, args: any) => {

@@ -13,6 +13,7 @@ import {
 
 import { BookCollection } from "../book-collection/entity";
 import { BookCategory } from "../book-category/entity";
+import { PhoneNumber } from "../phone-number/entity";
 
 export enum Status {
   OFFLINE = "offline",
@@ -53,11 +54,18 @@ export class Book extends BaseEntity {
   ])
   public bookCategories: BookCategory[]
 
+  @OneToMany(() => PhoneNumber, 
+    (phoneNumber) => phoneNumber.bookUuid,
+    {
+      cascade: ["insert", "update"],
+    })
+  @JoinColumn([
+      { name: "uuid" }
+  ])
+  public phoneNumbers: PhoneNumber[]
+
   @Column("text", {nullable: true})
   description: string;
-
-  @Column("char", {nullable: true, length: 100})
-  phoneNumber: string;
 
   @Column("char", {nullable: true, length: 100})
   email: string;

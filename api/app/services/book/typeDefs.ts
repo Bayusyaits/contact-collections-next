@@ -2,16 +2,17 @@
 export const typeDefs = `
   extend type Query {
     getBooks(
+      slug: String
       search: String
-      sortBy: String
+      orderBy: String
       type: String
       offset: Int
       limit: Int
       ): PaginateBook
     getListBooks(
       slug: String
-      sortBy: String
-        limit: Int
+      orderBy: String
+      limit: Int
       ): [Book!]!
     getBook(slug: String!): Book
   }
@@ -27,6 +28,7 @@ export const typeDefs = `
   type PaginateBook {
     hasMore: Boolean
     items: [Book!]!
+    offset: Int
     page: Int
     limit: Int
     total: Int
@@ -44,7 +46,7 @@ export const typeDefs = `
     image: String
     address: String
     description: String
-    phoneNumber: String!
+    phoneNumbers: [String]
     email: String
     type: String
   }
@@ -58,7 +60,7 @@ export const typeDefs = `
     image: String
     address: String
     description: String
-    phoneNumber: String
+    phoneNumbers: [String]
     email: String
     type: String
   }
@@ -71,11 +73,11 @@ export const typeDefs = `
     image: String
     address: String
     description: String
-    phoneNumber: String
     email: String
     type: String
     gallery: [Gallery]
     bookCollections: [BookCollection]
     bookCategories: [BookCategory]
+    phoneNumbers: [PhoneNumber]
   }
 `;

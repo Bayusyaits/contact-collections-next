@@ -25,9 +25,6 @@ export const POST_ADD_BULK_BOOK_COLLECTION = gql`
     ) {
       id
       uuid
-      bookUuid {
-        uuid
-      }
       userUuid
     }
   }
@@ -35,11 +32,11 @@ export const POST_ADD_BULK_BOOK_COLLECTION = gql`
 export const GET_LIST_BOOK_COLLECTIONS = gql`
   query getListBookCollections(
     $slug: String
-    $sortBy: String
+    $orderBy: String
   ) {
     getListBookCollection(
       slug: $slug,
-      sortBy: $sortBy
+      orderBy: $orderBy
     ) {
       uuid
       bookUuid {

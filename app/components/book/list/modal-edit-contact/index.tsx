@@ -7,12 +7,12 @@ import * as yup from "yup";
 
 import BookListModalEditContactView from "./BookListModalEditContactView";
 import { setSpaceToDash } from "helpers/mixins";
-import { GET_LIST_BOOKS, PUT_BOOK } from "queries/book/queries";
+import { GET_LIST_BOOKS, GET_BOOKS, PUT_BOOK } from "queries/book/queries";
 import { isEmpty } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
-  sortBy?: string,
+  orderBy?: string,
   payload: PayloadProps,
   onClose: () => void
 };
@@ -34,7 +34,7 @@ type PayloadProps = {
 }
 const BookListModalEditContainer = (props: Props) => {
   const {
-    sortBy = 'createdDate',
+    orderBy = 'createdDate',
     onFinish,
     payload,
     onClose
@@ -45,9 +45,10 @@ const BookListModalEditContainer = (props: Props) => {
   const [isFirst, setFirst] = useState(false);
 
   const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: 'cache-first',
     variables: {
-      sortBy,
+      orderBy,
       slug
     },
   }) 
@@ -55,8 +56,8 @@ const BookListModalEditContainer = (props: Props) => {
   const [editBook] = useMutation(PUT_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
-      GET_LIST_BOOKS, // DocumentNode object parsed with gql
-      'getListBooks' // Query fullName
+      GET_BOOKS, // DocumentNode object parsed with gql
+      'getBooks' // Query fullName
     ],
   });
   let defaultValues = {
@@ -115,24 +116,23 @@ const BookListModalEditContainer = (props: Props) => {
     setSlug(fullName)
     if (isEmpty(val?.field)) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
-      console.log('err 0', bool)
       bool = false
-    } else if (books && books.indexOf((el: any) => (el?.fullName && 
+    } else if (books && books.length && Array.isArray(books) &&
+      books.indexOf((el: any) => (el?.fullName && 
         setSpaceToDash(el.fullName) === fullName && el.uuid !== uuid)) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
       bool = false
-    } else if (books && books.indexOf((el: any) => (el?.email && 
+    } else if (books && books.length && Array.isArray(books) &&
+      books.indexOf((el: any) => (el?.email && 
       setSpaceToDash(el.email) === email && el.uuid !== uuid)) > -1) {
-        console.log('err 2', bool)
       setError('field.email',  { type: "focus", message: 'Email already exists'});
       bool = false
-    } else if (books && books.indexOf((el: any) => (el?.phoneNumber && 
+    } else if (books && books.length && Array.isArray(books) &&
+      books.indexOf((el: any) => (el?.phoneNumber && 
       setSpaceToDash(el.phoneNumber) === phoneNumber && el.uuid !== uuid)) > -1) {
-      console.log('err 3', bool)
       setError('field.phoneNumber',  { type: "focus", message: 'Phone number already exists'});
       bool = false
     }
-    console.log('bool', bool)
     if (bool) {
       const variables =  {
         userUuid: payload.userUuid,

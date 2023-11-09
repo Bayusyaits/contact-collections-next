@@ -1,18 +1,17 @@
 import React from "react";
 import ErrorNotFound from 'components/error/not-found';
 import Button from '@mui/material/Button';
-import { Card, CardActionArea, CardContent, Chip, Grid, Typography } from "@mui/material";
+import { Card, CardActionArea, CardContent, Chip, Grid, Pagination, Typography } from "@mui/material";
 import Link from "next/link";
 
 function BookListView({
   data, 
   error, 
   loading,
-  loadMore,
   loadingMore,
   openModalDeleteContact,
   openModalEditContact,
-  handleLoadMore,
+  handlePagination,
   handleChange
 }: any) {
 
@@ -162,15 +161,7 @@ function BookListView({
           marginTop: 5
         }}
       >
-        {loadMore && data.getBooks.hasMore && (
-          <Button 
-            variant="outline"
-            onClick={handleLoadMore}
-            disabled={loading || loadingMore}
-          >
-            { loading || loadingMore ? 'Loading' : 'Load More' }
-          </Button>
-        )}
+          <Pagination count={Math.abs(data.getBooks.total / data.getBooks.limit)} page={data.getBooks.offset + 1} onChange={handlePagination} />
       </Grid>
     </>
   );

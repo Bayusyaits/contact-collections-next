@@ -12,7 +12,7 @@ export default class Args {
   uuid?: string;
 
   @Field({ nullable: true })
-  sortBy?: string;
+  orderBy?: string;
 
   @Field({ nullable: true })
   search?: string;

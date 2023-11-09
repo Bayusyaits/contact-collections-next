@@ -12,7 +12,7 @@ import { GET_LIST_COLLECTIONS, POST_CREATE_COLLECTION } from "queries/collection
 
 type Props = {
   onFinish: () => void
-  sortBy?: string,
+  orderBy?: string,
   onSwitch: () => void
 };
 
@@ -24,14 +24,14 @@ type Payload = {
 }
 const BookListModalCreateContainer = (props: Props) => {
   const {
-    sortBy = 'id',
+    orderBy = 'id',
     onFinish,
     onSwitch
   } = props
   const { loading, error, data } = useQuery(GET_LIST_COLLECTIONS, {
     fetchPolicy: "no-cache",
     variables: {
-      sortBy,
+      orderBy,
       slug: ''
     },
   }) 

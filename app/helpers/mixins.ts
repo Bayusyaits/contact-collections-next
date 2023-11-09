@@ -4,18 +4,6 @@ export const setSpaceToDash = (val: string, operator: string = '-') => {
   }
   return val?.toString().replace(/\s+/g, operator).toLowerCase()
 }
- 
-export const sortByHighestNumber = (arrOfObj: any[], key: string) => {
-  return arrOfObj.sort(function(a, b) {
-    return b[key] - a[key];
-  });
-};
-
-export const sortByLowestNumber = (arrOfObj: any[], key: string) => {
-  return arrOfObj.sort(function(a, b) {
-    return a[key] - b[key];
-  });
-};
 
 /**
  * Creates an array of shuffled values, using a version of the

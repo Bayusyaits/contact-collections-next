@@ -7,49 +7,51 @@ import * as yup from "yup";
 
 import BookListModalCreateContactView from "./BookListModalCreateContactView";
 import { setSpaceToDash } from "helpers/mixins";
-import { GET_LIST_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
+import { GET_BOOKS, GET_LIST_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
 
 type Props = {
   onFinish: (payload: any) => void
-  sortBy?: string,
+  orderBy?: string,
   onClose: () => void
 };
 
 type Payload = {
   field: {
     fullName: string,
-    phoneNumber: string
+    phoneNumbers: [string]
     email: string
   }
 }
 const BookListModalCreateContainer = (props: Props) => {
   const {
-    sortBy = 'createdDate',
+    orderBy = 'createdDate',
     onFinish,
     onClose
   } = props
+  const [total, setTotal] = useState<number>(1)
   const [slug, setSlug] = useState<string>('');
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: 'cache-first',
     variables: {
-      sortBy,
+      orderBy,
       slug
     },
   }) 
-  const books = data && data.getListBooks ? data.getListBooks : []
+  const books = data && data.getBooks ? data.getBooks : []
   const [addBook] = useMutation(POST_CREATE_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
-      GET_LIST_BOOKS, // DocumentNode object parsed with gql
-      'getListBooks' // Query fullName
+      GET_BOOKS, // DocumentNode object parsed with gql
+      'getBooks' // Query fullName
     ],
   });
   let defaultValues = {
     field: {
       fullName: '',
       email: '',
-      phoneNumber: ''
+      phoneNumbers: []
     }
   };
   useEffect(() => {
@@ -64,13 +66,14 @@ const BookListModalCreateContainer = (props: Props) => {
           .required('Full name is required')
           .matches(/^'?\p{L}+(?:[' ]\p{L}+)*'?$/u, 'doesn’t have special Char'),
         email: yup.string().required('Email is required'),
-        phoneNumber: yup.string().required('Phone number is required')
+        phoneNumbers: yup.array().of(
+          yup.string()
+        )
       }),
     })
     .required();
   const handleSave = (val: Payload) => {
     let bool = true
-    console.log('books', books)
     const fullName: any = setSpaceToDash(val?.field?.fullName)
     if (loadingSubmit) {
       return
@@ -80,7 +83,7 @@ const BookListModalCreateContainer = (props: Props) => {
     if (!val?.field) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
       bool = false
-    } else if (books && val?.field?.fullName && 
+    } else if (books && books.length && Array.isArray(books) && val?.field?.fullName && 
       books.indexOf((el: any) => el?.fullName && 
         setSpaceToDash(el.fullName) === fullName) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
@@ -93,7 +96,7 @@ const BookListModalCreateContainer = (props: Props) => {
         type: 'contact',
         status: 'online',
         fullName: val.field.fullName,
-        phoneNumber: val.field.phoneNumber,
+        phoneNumbers: val.field.phoneNumbers,
         email: val.field.email,
         slug: setSpaceToDash(val.field.fullName)
       }
@@ -128,6 +131,8 @@ const BookListModalCreateContainer = (props: Props) => {
     errors,
     loading,
     isDisabled: false,
+    total,
+    setTotal,
     loadingSubmit,
     error,
     control,

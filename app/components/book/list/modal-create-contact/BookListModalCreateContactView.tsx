@@ -10,6 +10,7 @@ type BookListModalCreateContactViewProps = {
   handleCloseModal: () => void,
   isDisabled?: boolean,
   loadingSubmit: boolean,
+  total: number,
   control: any,
   errors: any,
   error: any
@@ -22,8 +23,43 @@ export const BookListModalCreateContactView = ({
   control,
   loadingSubmit,
   error,
+  total,
   errors
 }: BookListModalCreateContactViewProps) => {
+
+const formPhoneNumber = () => {
+  let dom = []
+  for (let i = 0; i < total; i++) {
+    dom.push(
+      <FormControl
+        fullWidth
+        variant="outlined"
+        sx={{
+          marginTop: 2,
+        }}
+      >
+        <InputLabel>Phone Number</InputLabel>
+        <Controller
+          name={`field.phoneNumbers.${i}`}
+          defaultValue={''}
+          control={control}
+          render={({ field }: any) => (
+            <OutlinedInput
+              id={`book-detail-modal-create-phone_number_${i}`}
+              label="Phone Number"
+              defaultValue="Small"
+              variant={"standard"}
+              size="small"
+              {...field}
+            />)
+          }
+        />
+        <FormHelperText error={true}>{errors.field?.phoneNumber?.[i]?.message}</FormHelperText>
+      </FormControl>
+    )
+  }
+  return (dom)
+}
   if (error) return <p>Error : {error.message ? error.message : 'Error'}</p>;
   return (
       <Grid
@@ -63,31 +99,9 @@ export const BookListModalCreateContactView = ({
             />
             <FormHelperText error={true}>{errors.field?.name?.message}</FormHelperText>
           </FormControl>
-          <FormControl
-            fullWidth
-            variant="outlined"
-            sx={{
-              marginTop: 2,
-            }}
-          >
-            <InputLabel>Phone Number</InputLabel>
-            <Controller
-              name="field.phoneNumber"
-              defaultValue={''}
-              control={control}
-              render={({ field }: any) => (
-                <OutlinedInput
-                  id="book-detail-modal-create-phone_number"
-                  label="Phone Number"
-                  defaultValue="Small"
-                  variant={"standard"}
-                  size="small"
-                  {...field}
-                />)
-              }
-            />
-            <FormHelperText error={true}>{errors.field?.phoneNumber?.message}</FormHelperText>
-          </FormControl>
+          {
+            formPhoneNumber()
+          }
           <FormControl
             fullWidth
             variant="outlined"

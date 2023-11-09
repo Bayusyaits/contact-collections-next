@@ -29,11 +29,11 @@ export const POST_CREATE_COLLECTION = gql`
 export const GET_LIST_COLLECTIONS = gql`
   query getListCollections(
     $slug: String
-    $sortBy: String
+    $orderBy: String
   ) {
     getListCollection(
       slug: $slug,
-      sortBy: $sortBy
+      orderBy: $orderBy
     ) {
       uuid
       name

@@ -12,7 +12,7 @@ import BookListModalEditContact from "./modal-edit-contact";
 import BookListModalCreateCollection from "./modal-create-collection";
 import BookListSidebarView from "./BookListSidebarView";
 import { BookProps, Payload } from './interfaces';
-import { GET_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
+import { GET_BOOKS } from "queries/book/queries";
 import { POST_ADD_BULK_BOOK_COLLECTION } from "queries/book_collection/queries";
 import { GET_LIST_COLLECTIONS } from "queries/collection/queries";
 
@@ -21,8 +21,10 @@ const BookListContainer: React.FC<BookProps> = ({
   fetchLimit = 10,
   loadMore = true,
 }) => {
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('');
+  const [limit, setLimit] = useState(fetchLimit);
+  const [offset, setOffset] = useState(0);
+  const [slug, setSlug] = useState('');
+  const [orderBy, setSortBy] = useState('createdDate');
   const [loadingMore, setLoadingMore] = useState(false);
   const [values, setValues] = useState<string[]>([]);
   const { openModal } = useModal();
@@ -43,13 +45,6 @@ const BookListContainer: React.FC<BookProps> = ({
       'getBooks' // Query name
     ],
   });
-  const [addBook] = useMutation(POST_CREATE_BOOK, {
-    fetchPolicy: "no-cache",
-    // refetchQueries: [
-    //   GET_BOOKS, // DocumentNode object parsed with gql
-    //   'getBooks' // Query name
-    // ],
-  });
   const { 
     data: dataCollections 
   } = useQuery(GET_LIST_COLLECTIONS, {
@@ -58,20 +53,22 @@ const BookListContainer: React.FC<BookProps> = ({
       slug: ''
     },
   }) 
-  const { loading, error, data, fetchMore, refetch } = useQuery(GET_BOOKS, {
+  const { loading, error, data, fetchMore } = useQuery(GET_BOOKS, {
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: 'cache-first',
     variables: {
-      offset: 0,
-      sortBy,
-      search,
-      limit: fetchLimit,
+      offset,
+      orderBy,
+      slug,
+      limit,
     },
   }) 
   const handleLoadMore = () => {
     setLoadingMore(true);
     fetchMore({
       variables: {
-        offset: Number(data.getBooks.items.length),
-        limit: fetchLimit,
+        offset,
+        limit,
       },
       updateQuery: (prev, { fetchMoreResult }) => {
         setLoadingMore(false);
@@ -95,30 +92,30 @@ const BookListContainer: React.FC<BookProps> = ({
     const onFinish = (val: Payload) => {
       onSubmitModal();
       console.log('onFinish', val)
-      // addBulkBookCollection({
-      //   variables: {
-      //       collections: val.collections,
-      //       books: values,
-      //       userUuid: '1091357a-3269-11ee-be56-0242ac120002'
-      //     } 
-      //   },
-      // ).then((val: any) => {
-      //   if (!val?.data || val?.data.length == 0) {
-      //     return
-      //   }
-      //   setValues([])
-      //   if (data.getBooks && data.getBooks.items && 
-      //     data.getBooks.items.length > 0) {
-      //     for (let i = 0; i < data.getBooks.items.length; i++) {
-      //       const el: any = document.getElementById(`field-books--${i}`)
-      //       if (el && el.checked) {
-      //         el.checked = false
-      //       }
-      //     }
-      //   }
-      // }).catch((err) => {
-      //   console.log('err', err)
-      // });
+      addBulkBookCollection({
+        variables: {
+            collections: val.collections,
+            books: values,
+            userUuid: '1091357a-3269-11ee-be56-0242ac120002'
+          } 
+        },
+      ).then((val: any) => {
+        if (!val?.data || val?.data.length == 0) {
+          return
+        }
+        setValues([])
+        if (data.getBooks && data.getBooks.items && 
+          data.getBooks.items.length > 0) {
+          for (let i = 0; i < data.getBooks.items.length; i++) {
+            const el: any = document.getElementById(`field-books--${i}`)
+            if (el && el.checked) {
+              el.checked = false
+            }
+          }
+        }
+      }).catch((err) => {
+        console.log('err', err)
+      });
     };
     const onSwitch = () => {
       closeModal();
@@ -139,33 +136,8 @@ const BookListContainer: React.FC<BookProps> = ({
     });
   }, 1000);
   const openModalAddContact = debounce(() => {
-    const onFinish = (val: Payload) => {
+    const onFinish = () => {
       onSubmitModal();
-      refetch()
-      console.log('susus', val)
-      // addBook({
-      //   variables: {
-      //       ...val,
-      //       userUuid: 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
-      //     } 
-      //   },
-      // ).then((val: any) => {
-      //   if (!val?.data || val?.data.length == 0) {
-      //     return
-      //   }
-      //   setValues([])
-      //   if (data.getBooks && data.getBooks.items && 
-      //     data.getBooks.items.length > 0) {
-      //     for (let i = 0; i < data.getBooks.items.length; i++) {
-      //       const el: any = document.getElementById(`field-books--${i}`)
-      //       if (el && el.checked) {
-      //         el.checked = false
-      //       }
-      //     }
-      //   }
-      // }).catch((err) => {
-      //   console.log('err', err)
-      // });
     };
     const onClose = () => {
       closeModal();
@@ -186,9 +158,7 @@ const BookListContainer: React.FC<BookProps> = ({
   }, 1000);
   const openModalEditContact = debounce((payload: any) => {
     const onFinish = (val: Payload) => {
-      onSubmitModal();
-      console.log('susus', val)
-      
+      onSubmitModal();      
     };
     const onClose = () => {
       closeModal();
@@ -210,9 +180,7 @@ const BookListContainer: React.FC<BookProps> = ({
   }, 1000);
   const openModalDeleteContact = debounce((payload: any) => {
     const onFinish = (val: Payload) => {
-      onSubmitModal();
-      console.log('susus', val)
-      
+      onSubmitModal();      
     };
     const onClose = () => {
       closeModal();
@@ -255,14 +223,14 @@ const BookListContainer: React.FC<BookProps> = ({
       },
     });
   }, 1000);
-  const handleChangeSearch = (e: any) => {
+  const handleChangeSearch = debounce((e: any) => {
     const {
       target: {
         value
       }
     } = e
-    setSearch(value)
-  }
+    setSlug(value)
+  }, 500)
   const handleChangeSortBy = (e: any) => {
     const {
       target: {
@@ -277,6 +245,10 @@ const BookListContainer: React.FC<BookProps> = ({
     openModalAddCollection,
     openModalAddContact
   }
+  const handlePagination = () => {
+    console.log('handlePagination')
+    setLimit(offset+1)
+  }
   const handlerList = {
     handleLoadMore,
     error,
@@ -287,12 +259,13 @@ const BookListContainer: React.FC<BookProps> = ({
     type,
     openModalDeleteContact,
     openModalEditContact,
+    handlePagination,
     collections: dataCollections?.getListCollections || [],
     handleChange
   }
   const handleSearch = {
-    search,
-    sortBy,
+    slug,
+    orderBy,
     loading,
     loadingMore,
     handleChangeSearch,

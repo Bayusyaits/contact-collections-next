@@ -5,6 +5,7 @@ import { Category } from "./services/category/entity"
 import { Book } from "./services/book/entity"
 import { Collection } from "./services/collection/entity"
 import { BookCollection } from "./services/book-collection/entity"
+import { PhoneNumber } from "./services/phone-number/entity"
 import { BookCategory } from "./services/book-category/entity"
 
 export const AppDataSource = new DataSource({
@@ -22,7 +23,8 @@ export const AppDataSource = new DataSource({
         Book, 
         Collection, 
         BookCollection,
-        BookCategory
+        BookCategory,
+        PhoneNumber
     ],
     migrations: [],
     subscribers: [],

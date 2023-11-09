@@ -4,7 +4,7 @@ export interface Payload {
 
 export interface Props {
   onFinish: (val: Payload) => void
-  sortBy?: string,
+  orderBy?: string,
   onSwitch: () => void
 };
 

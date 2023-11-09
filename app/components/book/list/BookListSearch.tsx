@@ -4,8 +4,7 @@ import { FormControl, Grid, MenuItem, OutlinedInput, Select } from "@mui/materia
 function BookListView({
   loading,
   loadingMore,
-  sortBy,
-  search,
+  orderBy,
   handleChangeSortBy,
   handleChangeSearch
 }: any) {
@@ -24,19 +23,16 @@ function BookListView({
             position: 'relative'
           }}
           item lg={4} xl={4} xs={4} sm={4} md={4}>
-          <OutlinedInput
-            id="book-list-search"
-            label="Title"
-            value={search}
-            disabled={loadingMore || loading}
+          <input
+            id="book-list-slug"
+            type="text"
             onChange={handleChangeSearch}
-            size="small"
           />
           <FormControl fullWidth>
             <Select
               labelId="book-list-label"
               id="book-list-sortby"
-              value={sortBy}
+              value={orderBy}
               disabled={loadingMore || loading}
               label="Sort By"
               onChange={handleChangeSortBy}

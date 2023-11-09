@@ -1,6 +1,6 @@
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { InputLabel, FormHelperText, Grid } from '@mui/material';
+import { InputLabel, FormHelperText, Grid, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Controller } from "react-hook-form";
 import React from "react";
@@ -37,6 +37,12 @@ export const BookListModalEditContactView = ({
           marginTop: 2
         }}
       >
+        {
+          errorMessage ? 
+          (<Typography gutterBottom variant="small" component="div">
+          {errorMessage}
+          </Typography>) : (<></>)
+        }
         <form
           onSubmit={handleSubmit(handleSave)}
           style={{
@@ -111,6 +117,7 @@ export const BookListModalEditContactView = ({
                   label="Email"
                   defaultValue="Small"
                   variant={"standard"}
+                  disabled={errorMessage}
                   size="small"
                   {...field}
                 />)

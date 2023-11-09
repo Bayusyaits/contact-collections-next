@@ -4,7 +4,7 @@ export const typeDefs = `
     getBookCollections(
       uuid: String!
       search: String
-      sortBy: String
+      orderBy: String
       bookUuid: String
       userUuid: String
       offset: Int
@@ -41,6 +41,7 @@ export const typeDefs = `
   type PaginateBookCollection {
     hasMore: Boolean
     items: [BookCollection!]!
+    offset: Int
     page: Int
     limit: Int
     total: Int

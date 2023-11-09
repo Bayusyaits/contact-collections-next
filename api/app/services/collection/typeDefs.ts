@@ -4,14 +4,14 @@ export const typeDefs = `
     getCollections(
       slug: String!
       search: String
-      sortBy: String
+      orderBy: String
       type: String
       offset: Int
       limit: Int
       ): PaginateCollection
     getListCollection(
       slug: String
-      sortBy: String
+      orderBy: String
       ): [Collection!]!
     getCollection(uuid: String!): Collection
   }
@@ -26,6 +26,7 @@ export const typeDefs = `
   type PaginateCollection {
     hasMore: Boolean
     items: [Collection!]!
+    offset: Int
     page: Int
     limit: Int
     total: Int

@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { v4 } from "uuid";
 import Args, { CollectionResponse } from "./args";
 import { AppDataSource } from "../../data-source"
@@ -6,6 +5,7 @@ import { Collection as CollectionEntity } from "./entity";
 import { filterItems } from "../../helpers/filter";
 import { generateKey, setSpaceToDash } from "../../helpers/mixins";
 import slugify from "../../helpers/slugify";
+import { Raw } from "typeorm";
 
 // Provide resolver functions for your schema fields
 export const Query = {
@@ -15,61 +15,53 @@ export const Query = {
     return await collectionEntity.findOne({ where: { uuid: uuid } });
   },
   getListCollection: async (_: any, args: any) => {
-    const { slug, sortBy } = args;
+    const { slug, orderBy } = args;
     const where = {}
     const order = {}
     if (slug) {
       Object.assign(where, {
-        slug
+        slug: Raw((alias) => `${alias} LIKE :slug`, { slug: `%${slug}%` })
       })
     }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
-    }
-    const obj = {}
-    if (order && !isEmpty(order)) {
-      Object.assign(obj, order)
-    }
-    if (where && !isEmpty(where)) {
-      Object.assign(obj, where)
     }
     const collectionEntity = AppDataSource.getRepository(CollectionEntity)
-    return await collectionEntity.find(obj);
+    return await collectionEntity.find(
+      {
+        where,
+        order
+      }
+    );
   },
   getCollections: async (_: any, args: Args): Promise<CollectionResponse> => {
     const collectionEntity = AppDataSource.getRepository(CollectionEntity)
-    const { offset = 0, limit = 10, slug, type, sortBy } = args;
+    const { offset = 0, limit = 10, slug, type, orderBy } = args;
     const where = {}
     const order = {}
     if (slug) {
       Object.assign(where, {
-        slug
+        slug: Raw((alias) => `${alias} LIKE :slug`, { slug: `%${slug}%` })
       })
     }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
-    }
-    const obj = {}
-    if (order && !isEmpty(order)) {
-      Object.assign(obj, order)
-    }
-    if (where && !isEmpty(where)) {
-      Object.assign(obj, where)
     }
     const [data, total] = await collectionEntity.findAndCount({
-      ...obj,
-      take: 10,
-      skip: 0
+      where,
+      order,
+      take: limit,
+      skip: offset
     })
     const filteredData = filterItems(
       data,
       limit,
       offset,
-      slug,
+      // slug,
       type
     );
     const res = new CollectionResponse({
@@ -87,22 +79,18 @@ export const Query = {
 export const Mutation = {
   addCollection: async (_: any, args: any) => {
     try {
-      try {
-        const generate = Math.floor(generateKey(100))
-        const { name, image } = args;
-        const collection = new CollectionEntity()
-        collection.name = name
-        collection.uuid = v4()
-        collection.slug = slugify(name) ? `${setSpaceToDash(slugify(name))}_${generate}` : 
-        `${setSpaceToDash(name)}_${generate}`
-        collection.image = image
-        const collectionRepository = AppDataSource.getRepository(CollectionEntity)
-        return await collectionRepository.save(collection);
-      } catch (error) {
-        return {};
-      }
+      const generate = Math.floor(generateKey(100))
+      const { name, image } = args;
+      const collection = new CollectionEntity()
+      collection.name = name
+      collection.uuid = v4()
+      collection.slug = slugify(name) ? `${setSpaceToDash(slugify(name))}_${generate}` : 
+      `${setSpaceToDash(name)}_${generate}`
+      collection.image = image
+      const collectionRepository = AppDataSource.getRepository(CollectionEntity)
+      return await collectionRepository.save(collection);
     } catch (error) {
-      return false;
+      return {};
     }
   },
   editCollection: async (_: any, args: any) => {

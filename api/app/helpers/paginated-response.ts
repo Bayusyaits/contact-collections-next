@@ -12,6 +12,9 @@ export default function PaginatedResponse<TItem>(TItemClass: ClassType<TItem>) {
     // @ts-ignore
     @Field(type => Int)
     total: number;
+
+    @Field()
+    offset: number;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     @Field()

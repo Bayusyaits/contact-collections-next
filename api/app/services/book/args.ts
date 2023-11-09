@@ -12,7 +12,7 @@ export default class Args {
   type?: string;
 
   @Field({ nullable: true })
-  sortBy?: string;
+  orderBy?: string;
 
   @Field({ nullable: true })
   search?: string;
@@ -37,9 +37,6 @@ export class Book {
 
   @Field()
   address: string;
-
-  @Field()
-  phoneNumber: string;
 
   @Field()
   email: string;

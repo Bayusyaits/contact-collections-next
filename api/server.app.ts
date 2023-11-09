@@ -7,6 +7,7 @@ import { typeDefs as UserTypeDefs } from "./app/services/user/typeDefs";
 import { typeDefs as CategoryTypeDefs } from "./app/services/category/typeDefs";
 import { typeDefs as BookTypeDefs } from "./app/services/book/typeDefs";
 import { typeDefs as CollectionTypeDefs } from "./app/services/collection/typeDefs";
+import { typeDefs as PhoneNumberTypeDefs } from "./app/services/phone-number/typeDefs";
 import { typeDefs as BookCollectionTypeDefs } from "./app/services/book-collection/typeDefs";
 import { typeDefs as BookCategoryTypeDefs } from "./app/services/book-category/typeDefs";
 import {
@@ -33,6 +34,10 @@ import {
   Query as BookCategoryQuery,
   Mutation as BookCategoryMutations
 } from "./app/services/book-category/resolvers";
+import {
+  Query as PhoneNumberQuery,
+  Mutation as PhoneNumberMutations
+} from "./app/services/phone-number/resolvers";
 const PORT = process.env.PORT || 4003;
 
 const startServer = async () => {
@@ -43,7 +48,8 @@ const startServer = async () => {
       BookTypeDefs,
       CollectionTypeDefs,
       BookCollectionTypeDefs,
-      BookCategoryTypeDefs
+      BookCategoryTypeDefs,
+      PhoneNumberTypeDefs
     ],
     resolvers: merge(
       {
@@ -53,7 +59,8 @@ const startServer = async () => {
           ...BookQuery,
           ...CollectionQuery,
           ...BookCollectionQuery,
-          ...BookCategoryQuery
+          ...BookCategoryQuery,
+          ...PhoneNumberQuery
         },
         Mutation: {
           ...CategoryMutations,
@@ -61,7 +68,8 @@ const startServer = async () => {
           ...BookMutations,
           ...CollectionMutations,
           ...BookCollectionMutations,
-          ...BookCategoryMutations
+          ...BookCategoryMutations,
+          ...PhoneNumberMutations
         }
       }
     ),

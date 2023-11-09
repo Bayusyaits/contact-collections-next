@@ -3,22 +3,26 @@ import gql from "graphql-tag";
 export const GET_LIST_BOOKS = gql`
 query getListBooks(
   $slug: String
-  $sortBy: String
+  $orderBy: String
 ) {
   getListBooks(
     slug: $slug
-    sortBy: $sortBy
+    orderBy: $orderBy
   ) {
     uuid
     userUuid
     fullName
     slug
     address
-    phoneNumber
     description
     email
     type
     image
+    phoneNumbers {
+      uuid
+      phoneNumber
+      id
+    }
   }
 }
 `;
@@ -35,7 +39,6 @@ export const GET_BOOK = gql`
       fullName
       slug
       description
-      phoneNumber
       type
       image
       address
@@ -53,6 +56,11 @@ export const GET_BOOK = gql`
           name
           uuid
         }
+        id
+      }
+      phoneNumbers {
+        uuid
+        phoneNumber
         id
       }
     }
@@ -73,7 +81,6 @@ query getBook(
       fullName
       slug
       description
-      phoneNumber
       email
       address
       type
@@ -92,6 +99,11 @@ query getBook(
         }
         id
       }
+      phoneNumbers {
+        uuid
+        phoneNumber
+        id
+      }
     }
     hasMore
   }
@@ -101,14 +113,16 @@ export const GET_BOOKS = gql`
 query getBooks(
   $offset: Int
   $limit: Int
+  $slug: String
   $search: String
-  $sortBy: String
+  $orderBy: String
 ) {
   getBooks(
     offset: $offset
     limit: $limit
+    slug: $slug
     search: $search
-    sortBy: $sortBy
+    orderBy: $orderBy
   ) {
     items {
       uuid
@@ -116,7 +130,6 @@ query getBooks(
       slug
       address
       userUuid
-      phoneNumber
       description
       email
       type
@@ -135,20 +148,28 @@ query getBooks(
         }
         id
       }
+      phoneNumbers {
+        uuid
+        phoneNumber
+        id
+      }
     }
+    offset
+    page
+    limit
+    total
     hasMore
   }
 }
 `;
 
 export const POST_CREATE_BOOK = gql`
-  mutation editBook(
-    $uuid: String!
+  mutation addBook(
     $status: String
     $slug: String
     $fullName: String!
     $userUuid: String!
-    $phoneNumber: String!
+    $phoneNumbers: [String!]
     $image: String
     $address: String
     $description: String
@@ -157,12 +178,11 @@ export const POST_CREATE_BOOK = gql`
   ) {
     addBook(
       payload: {
-        uuid: $uuid
         status: $status
         slug: $slug
         fullName: $fullName
         userUuid: $userUuid
-        phoneNumber: $phoneNumber
+        phoneNumbers: $phoneNumbers
         image: $image
         address: $address
         description: $description
@@ -173,7 +193,6 @@ export const POST_CREATE_BOOK = gql`
       fullName
       type
       email
-      phoneNumber
     }
   }
 `;
@@ -185,7 +204,7 @@ export const PUT_BOOK = gql`
     $uuid: String!
     $fullName: String!
     $userUuid: String!
-    $phoneNumber: String!
+    $phoneNumbers: [String!]
     $image: String
     $address: String
     $description: String
@@ -199,7 +218,7 @@ export const PUT_BOOK = gql`
         fullName: $fullName
         uuid: $uuid
         userUuid: $userUuid
-        phoneNumber: $phoneNumber
+        phoneNumbers: $phoneNumbers
         image: $image
         address: $address
         description: $description
@@ -210,7 +229,6 @@ export const PUT_BOOK = gql`
       fullName
       type
       email
-      phoneNumber
     }
   }
 `;

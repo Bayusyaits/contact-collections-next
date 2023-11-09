@@ -13,7 +13,7 @@ import { isEmpty } from "lodash";
 
 type Props = {
   onFinish: () => void
-  sortBy?: string,
+  orderBy?: string,
   onSwitch: () => void
 };
 
@@ -26,14 +26,14 @@ type Payload = {
 }
 const BookDetailModalCreateContainer = (props: Props) => {
   const {
-    sortBy = 'id',
+    orderBy = 'createdDate',
     onFinish,
     onSwitch
   } = props
   const { loading, error, data } = useQuery(GET_LIST_COLLECTIONS, {
     fetchPolicy: "no-cache",
     variables: {
-      sortBy,
+      orderBy,
       slug: ''
     },
   }) 

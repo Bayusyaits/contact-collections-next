@@ -1,4 +1,3 @@
-import { isEmpty } from "lodash";
 import { v4 } from "uuid";
 import Args, { BookCategoryResponse } from "./args";
 import { AppDataSource } from "../../data-source"
@@ -9,12 +8,15 @@ import { filterItems } from "../../helpers/filter";
 export const Query = {
   getBookCategory: async (_: any, args: any) => {
     const { uuid } = args;
+    if (!uuid) {
+      return {}
+    }
     const bookCategoryEntity = AppDataSource.getRepository(BookCategoryEntity)
     return await bookCategoryEntity.findOne({ where: { uuid: uuid } });
   },
   getBookCategories: async (_: any, args: Args): Promise<BookCategoryResponse> => {
     const bookCategoryEntity = AppDataSource.getRepository(BookCategoryEntity)
-    const { offset = 0, limit = 10, uuid, sortBy } = args;
+    const { offset = 0, limit = 10, uuid, orderBy } = args;
     const where = {}
     const order = {}
     if (uuid) {
@@ -32,22 +34,16 @@ export const Query = {
     //     uuid: categoryUuid
     //   })
     // }
-    if (sortBy) {
+    if (orderBy) {
       Object.assign(order, {
-        [sortBy]: 'DESC'
+        [orderBy]: 'DESC'
       })
     }
-    const obj = {}
-    if (order && !isEmpty(order)) {
-      Object.assign(obj, order)
-    }
-    if (where && !isEmpty(where)) {
-      Object.assign(obj, where)
-    }
     const [data, total] = await bookCategoryEntity.findAndCount({
-      ...obj,
-      take: 10,
-      skip: 0
+      where,
+      order,
+      take: limit,
+      skip: offset
     })
     const filteredData = filterItems(
       data,
@@ -71,20 +67,16 @@ export const Query = {
 export const Mutation = {
   addBookCategory: async (_: any, args: any) => {
     try {
-      try {
-        const { userUuid, bookUuid, categoryUuid } = args;
-        const bookCategory = new BookCategoryEntity()
-        bookCategory.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
-        bookCategory.uuid = v4()
-        bookCategory.bookUuid = bookUuid
-        bookCategory.categoryUuid = categoryUuid
-        const bookCategoryRepository = AppDataSource.getRepository(BookCategoryEntity)
-        return await bookCategoryRepository.save(bookCategory);
-      } catch (error) {
-        return {};
-      }
+      const { userUuid, bookUuid, categoryUuid } = args;
+      const bookCategory = new BookCategoryEntity()
+      bookCategory.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
+      bookCategory.uuid = v4()
+      bookCategory.bookUuid = bookUuid
+      bookCategory.categoryUuid = categoryUuid
+      const bookCategoryRepository = AppDataSource.getRepository(BookCategoryEntity)
+      return await bookCategoryRepository.save(bookCategory);
     } catch (error) {
-      return false;
+      return {};
     }
   },
   addBulkBookCategory: async (_: any, args: any) => {
