@@ -20,6 +20,7 @@ function BookListView({
     !data.getBooks.items || data.getBooks.items.length === 0) {
     return <ErrorNotFound />;
   }
+  const {getBooks} = data
   return (
     <>
       <Grid 
@@ -30,7 +31,7 @@ function BookListView({
         alignItems="start"
       >
         {
-          data.getBooks.items.map(({ 
+          getBooks.items.map(({ 
             uuid,
             fullName, 
             slug,
@@ -189,18 +190,24 @@ function BookListView({
           ))
         }
       </Grid>
-      <Grid 
-        container 
-        rowSpacing={1} 
-        columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-        justifyContent="center"
-        alignItems="start"
-        sx={{
-          marginTop: 5
-        }}
-      >
-          <Pagination count={Math.ceil(Math.abs(data.getBooks.total / data.getBooks.limit))} page={data.getBooks.offset + 1} onChange={handlePagination} />
-      </Grid>
+      {
+        getBooks?.total >  getBooks.limit && (<Grid 
+          container 
+          rowSpacing={1} 
+          columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
+          justifyContent="center"
+          alignItems="start"
+          sx={{
+            marginTop: 5
+          }}
+        >
+            <Pagination
+              count={Math.ceil(Math.abs(data.getBooks.total / data.getBooks.limit))}
+              page={data.getBooks.offset + 1}
+              onChange={handlePagination} 
+            />
+        </Grid>)
+      }
     </>
   );
 }

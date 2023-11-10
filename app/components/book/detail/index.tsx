@@ -104,6 +104,7 @@ const BookDetailContainer: React.FC<BookProps> = () => {
   const openModalAddContact = debounce(() => {
     const onFinish = () => {
       onSubmitModal();
+      router.push('/')
     };
     const onClose = () => {
       closeModal();

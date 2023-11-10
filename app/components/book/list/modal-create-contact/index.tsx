@@ -15,7 +15,11 @@ type Props = {
   orderBy?: string,
   onClose: () => void
 };
-
+type PayloadProps = {
+  fullName: string,
+  slug: string,
+  email: string
+}
 type Payload = {
   field: {
     fullName: string,
@@ -57,9 +61,11 @@ const BookListModalCreateContainer = (props: Props) => {
     }
   };
   useEffect(() => {
+    setSlug('')
     return () => {
       setLoadingSubmit(false);
       setDisabled(false)
+      setSlug('')
     }
   }, [])
   const schema = yup
@@ -98,7 +104,9 @@ const BookListModalCreateContainer = (props: Props) => {
   }, 1000), [])
   useEffect(() => {
     setDisabled(false)
-    if (books && books.length && slug) {
+    setError('field.fullName',  { type: "focus", message: ''});
+    if (books && books.length && slug &&
+      books.findIndex((el: PayloadProps) => (el.slug === slug)) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
       setDisabled(true)
     }

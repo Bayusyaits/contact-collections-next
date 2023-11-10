@@ -50,7 +50,7 @@ const BookListModalEditContainer = (props: Props) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isFirst, setFirst] = useState(false);
 
-  const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
+  const { loading, error, data, refetch } = useQuery(GET_LIST_BOOKS, {
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: 'cache-first',
     variables: {
@@ -77,6 +77,8 @@ const BookListModalEditContainer = (props: Props) => {
     }
   };
   useEffect(() => {
+    setSlug('')
+    refetch()
     if (payload?.slug && payload?.phoneNumbers) {
       setSlug(payload.slug)
       setValue('field', payload)
@@ -86,6 +88,7 @@ const BookListModalEditContainer = (props: Props) => {
       setFirst(false)
       setErrorMessage('')
       setDisabled(false)
+      setSlug('')
     }
   }, [])
   useEffect(() => {

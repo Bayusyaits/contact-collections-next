@@ -78,33 +78,36 @@ function BookListView({
                 />
               ))
             }
-            {bookCategories && bookCategories.length ? 
-              bookCategories.map(({ uuid: uuidc, categoryUuid}: any) => (
-              <Grid
-                sx={{
-                  marginRight: 1
-                }}
-                item 
-                key={uuidc}
-              >
-                <Chip label={categoryUuid?.name || '-'} />
-              </Grid>
-              )) 
-            : null}
-
-            {bookCollections && bookCollections.length ? 
-              bookCollections.map(({ uuid: uuidc, collectionUuid}: any) => (
-              <Grid 
-                item 
-                sx={{
-                  marginRight: 1
-                }}
-                key={uuidc}
-              >
-                <Chip label={collectionUuid?.name || '-'} />
-              </Grid>
-              )) 
-            : null}
+            <div style={{ display: 'flex'}}>
+              {bookCategories && bookCategories.length ? 
+                bookCategories.map(({ uuid: uuidc, categoryUuid}: any) => (
+                <Grid
+                  sx={{
+                    marginRight: 1
+                  }}
+                  item 
+                  key={uuidc}
+                >
+                  <Chip label={categoryUuid?.name || '-'} />
+                </Grid>
+                )) 
+              : null}
+            </div>
+            <div style={{ display: 'flex'}}>
+              {bookCollections && bookCollections.length ? 
+                bookCollections.map(({ uuid: uuidc, collectionUuid}: any) => (
+                <Grid 
+                  item 
+                  sx={{
+                    marginRight: 1
+                  }}
+                  key={uuidc}
+                >
+                  <Chip label={collectionUuid?.name || '-'} />
+                </Grid>
+                )) 
+              : null}
+            </div>
             <Button
               fullWidth
               variant="contained"

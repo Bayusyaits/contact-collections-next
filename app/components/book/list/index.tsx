@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 import { Grid } from "@mui/material";
 import BookListSearchView from "./BookListSearch";
@@ -51,7 +51,7 @@ const BookListContainer: React.FC<BookProps> = ({
       slug: ''
     },
   }) 
-  const { loading, error, data, fetchMore } = useQuery(GET_BOOKS, {
+  const { loading, error, data } = useQuery(GET_BOOKS, {
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: 'cache-first',
     variables: {
@@ -223,9 +223,15 @@ const BookListContainer: React.FC<BookProps> = ({
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     let tmpTotal = data?.getBooks?.total || 0
     const tmpLimit = Math.abs(tmpTotal - limit)
-    setLimit(tmpLimit > 10 ? limit : tmpLimit + 1)
+    setLimit(tmpLimit > 10 ? limit + 1 : tmpLimit + 1)
     setOffset(value - 1)
   }
+  useEffect(() => {
+    if (slug && limit > 10) {
+      setLimit(10)
+      setOffset(0)
+    }
+  }, [slug])
   const handlerList = {
     error,
     loading,

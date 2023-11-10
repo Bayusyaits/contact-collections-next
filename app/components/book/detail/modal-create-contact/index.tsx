@@ -16,6 +16,12 @@ type Props = {
   onClose: () => void
 };
 
+type PayloadProps = {
+  fullName: string,
+  slug: string,
+  email: string
+}
+
 type Payload = {
   field: {
     fullName: string,
@@ -57,9 +63,11 @@ const BooDetailModalCreateContainer = (props: Props) => {
     }
   };
   useEffect(() => {
+    setSlug('')
     return () => {
       setLoadingSubmit(false);
       setDisabled(false)
+      setSlug('')
     }
   }, [])
   const schema = yup
@@ -78,29 +86,31 @@ const BooDetailModalCreateContainer = (props: Props) => {
       }),
     })
     .required();
-    const {
-      watch,
-      setError,
-      control,
-      handleSubmit,
-      formState,
-      reset
-    } = useForm({
-      defaultValues,
-      resolver: yupResolver(schema),
-    });
-    const watchAll = watch()
-    const checkName = useCallback(debounce((val: string | null) => {
-      if (val && val.length > 1) {
-        setSlug(setSpaceToDash(val))
-      }
-    }, 1000), [])
-    useEffect(() => {
-      checkName(watchAll.field.fullName)
-    }, [watchAll.field.fullName])
+  const {
+    watch,
+    setError,
+    control,
+    handleSubmit,
+    formState,
+    reset
+  } = useForm({
+    defaultValues,
+    resolver: yupResolver(schema),
+  });
+  const watchAll = watch()
+  const checkName = useCallback(debounce((val: string | null) => {
+    if (val && val.length > 1) {
+      setSlug(setSpaceToDash(val))
+    }
+  }, 1000), [])
+  useEffect(() => {
+    checkName(watchAll.field.fullName)
+  }, [watchAll.field.fullName])
   useEffect(() => {
     setDisabled(false)
-    if (books && books.length && slug) {
+    setError('field.fullName',  { type: "focus", message: ''});
+    if (books && books.length && slug &&
+      books.findIndex((el: PayloadProps) => (el.slug === slug)) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
       setDisabled(true)
     }

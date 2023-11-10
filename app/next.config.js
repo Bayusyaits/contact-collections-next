@@ -23,14 +23,6 @@ const nextConfig = {
     appDir: true,
     allowMiddlewareResponseBody: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: '/:any*',
-        destination: '/',
-      },
-    ];
-  },
   env: {
     STRIPE_PUBLIC_KEY: 'your_stripe_public_key',
     API_URL: 'http://localhost:4003/graphql',

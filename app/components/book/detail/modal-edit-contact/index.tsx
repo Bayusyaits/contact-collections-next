@@ -77,6 +77,7 @@ const BookDetailModalEditContainer = (props: Props) => {
     }
   };
   useEffect(() => {
+    setSlug('')
     if (payload?.slug && payload?.phoneNumbers) {
       setSlug(payload.slug)
       setValue('field', payload)
@@ -86,6 +87,7 @@ const BookDetailModalEditContainer = (props: Props) => {
       setFirst(false)
       setErrorMessage('')
       setDisabled(false)
+      setSlug('')
     }
   }, [])
   useEffect(() => {
