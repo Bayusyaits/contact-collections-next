@@ -8,7 +8,6 @@ function BookListView({
   data, 
   error, 
   loading,
-  loadingMore,
   openModalDeleteContact,
   openModalEditContact,
   handlePagination,
@@ -35,7 +34,7 @@ function BookListView({
             uuid,
             fullName, 
             slug,
-            phoneNumber,
+            phoneNumbers,
             email,
             userUuid,
             bookCollections,
@@ -73,10 +72,26 @@ function BookListView({
                     <Typography gutterBottom variant="h5" component="div">
                       {fullName}
                     </Typography>
-                    </Link>
                     <Typography variant="body2" component="div">
-                      {phoneNumber}
+                      {email}
                     </Typography>
+                    </Link>
+                    {
+                      phoneNumbers.map(({phoneNumber}: any) => {
+                        return (
+                          <Typography
+                            variant="body2"
+                            key={phoneNumber}
+                            component="div"
+                            sx={{
+                              marginRight: '0.5rem'
+                            }}
+                          >
+                            {phoneNumber}
+                           </Typography>
+                        )
+                      })
+                    }
                     <Grid
                       item
                       sx={{
@@ -122,10 +137,10 @@ function BookListView({
                         uuid,
                         fullName, 
                         slug,
-                        phoneNumber,
+                        phoneNumbers,
                         userUuid
                       })}
-                      disabled={loading || loadingMore}
+                      disabled={loading}
                     >
                       Delete
                     </Button>
@@ -136,11 +151,11 @@ function BookListView({
                         uuid,
                         fullName, 
                         slug,
-                        phoneNumber,
+                        phoneNumbers,
                         userUuid,
                         email
                       })}
-                      disabled={loading || loadingMore}
+                      disabled={loading}
                     >
                       Edit
                     </Button>
@@ -161,7 +176,7 @@ function BookListView({
           marginTop: 5
         }}
       >
-          <Pagination count={Math.abs(data.getBooks.total / data.getBooks.limit)} page={data.getBooks.offset + 1} onChange={handlePagination} />
+          <Pagination count={Math.ceil(Math.abs(data.getBooks.total / data.getBooks.limit))} page={data.getBooks.offset + 1} onChange={handlePagination} />
       </Grid>
     </>
   );

@@ -8,6 +8,7 @@ import * as yup from "yup";
 import BookListModalCreateContactView from "./BookListModalCreateContactView";
 import { setSpaceToDash } from "helpers/mixins";
 import { GET_BOOKS, GET_LIST_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
+import { uniq } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
@@ -39,7 +40,7 @@ const BookListModalCreateContainer = (props: Props) => {
       slug
     },
   }) 
-  const books = data && data.getBooks ? data.getBooks : []
+  const books = data && data.getListBooks ? data.getListBooks : []
   const [addBook] = useMutation(POST_CREATE_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
@@ -51,7 +52,7 @@ const BookListModalCreateContainer = (props: Props) => {
     field: {
       fullName: '',
       email: '',
-      phoneNumbers: []
+      phoneNumbers: ['']
     }
   };
   useEffect(() => {
@@ -64,22 +65,27 @@ const BookListModalCreateContainer = (props: Props) => {
       field: yup.object({
         fullName: yup.string()
           .required('Full name is required')
-          .matches(/^'?\p{L}+(?:[' ]\p{L}+)*'?$/u, 'doesn’t have special Char'),
-        email: yup.string().required('Email is required'),
+          .matches(/^[a-zA-Z ]{2,30}$/, 'Name is invalid'),
+        email: yup.string()
+          .matches(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, 'Email is invalid'),
         phoneNumbers: yup.array().of(
           yup.string()
+          .required('Phone number is required')
+          .matches(/^(?:\+62|62|0)[2-9]\d{7,11}$/, 'Phone number is invalid')
         )
       }),
     })
     .required();
   const handleSave = (val: Payload) => {
     let bool = true
-    const fullName: any = setSpaceToDash(val?.field?.fullName)
+    const fullName = val?.field?.fullName || ''
+    const tmpSlug: any = setSpaceToDash(fullName)
+    const email: any = setSpaceToDash(val?.field?.email)
     if (loadingSubmit) {
       return
     }
     setLoadingSubmit(true);
-    setSlug(fullName)
+    setSlug(tmpSlug)
     if (!val?.field) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
       bool = false
@@ -88,15 +94,20 @@ const BookListModalCreateContainer = (props: Props) => {
         setSpaceToDash(el.fullName) === fullName) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
       bool = false
+    } else if (email &&
+      books && books.length && Array.isArray(books) && val?.field?.email && 
+      books.indexOf((el: any) => el?.email && 
+        setSpaceToDash(el.email) === email) > -1) {
+      setError('field.email',  { type: "focus", message: 'Email already exists'});
+      bool = false
     }
-    
     if (bool) {
       const variables =  {
         userUuid: 'de4e31bd-393d-40f7-86ae-ce8e25d81b00',
         type: 'contact',
         status: 'online',
         fullName: val.field.fullName,
-        phoneNumbers: val.field.phoneNumbers,
+        phoneNumbers: uniq(val.field.phoneNumbers),
         email: val.field.email,
         slug: setSpaceToDash(val.field.fullName)
       }

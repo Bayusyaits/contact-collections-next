@@ -60,7 +60,7 @@ export const typeDefs = `
     image: String
     address: String
     description: String
-    phoneNumbers: [String]
+    phoneNumbers: [PayloadPhoneNumber]
     email: String
     type: String
   }

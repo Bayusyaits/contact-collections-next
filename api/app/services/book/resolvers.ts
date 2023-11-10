@@ -6,6 +6,8 @@ import { Book as BookEntity } from "./entity";
 import { filterItems } from "../../helpers/filter";
 import { generateKey, setSpaceToDash } from "../../helpers/mixins";
 import slugify from "../../helpers/slugify";
+import { Mutation as MutationPhoneNumber } from '../phone-number/resolvers'
+import { isEmpty } from "lodash";
 
 // Provide resolver functions for your schema fields
 export const Query = {
@@ -93,7 +95,7 @@ export const Mutation = {
       const generate = Math.floor(generateKey(100))
       const { 
         payload: {
-          fullName, image, type, address, email,
+          fullName, image, type, address, email, phoneNumbers,
           status, description, gallery, userUuid, slug
         }
       } = args;
@@ -123,6 +125,7 @@ export const Mutation = {
       if (description) {
         book.description = description
       }
+      // offline just sms and call, online available in wa
       if (status && ['offline','online'].includes(status)) {
         book.status = status
       }
@@ -131,7 +134,15 @@ export const Mutation = {
       }
       book.image = image
       const bookRepository = AppDataSource.getRepository(BookEntity)
-      return await bookRepository.save(book);
+      const res = await bookRepository.save(book);
+      if (res && !isEmpty(res) && phoneNumbers && phoneNumbers.length) {
+        await MutationPhoneNumber.addBulkPhoneNumber(_, {
+          phoneNumbers,
+          bookUuid: res.uuid,
+          userUuid: res.userUuid
+        })
+      }
+      return res
     } catch (error) {
       return {};
     }
@@ -141,7 +152,7 @@ export const Mutation = {
       const { 
         payload: {
           fullName, uuid, image, type, address, email,
-          status, description, gallery, slug
+          status, description, gallery, slug, phoneNumbers
         }
       } = args;      
       const bookEntity = AppDataSource.getRepository(BookEntity)
@@ -178,7 +189,15 @@ export const Mutation = {
       if (gallery && Array.isArray(gallery)) {
         book.gallery = gallery
       }
-      return await bookEntity.save(book);
+      const res = await bookEntity.save(book);
+      if (res && !isEmpty(res) && phoneNumbers && phoneNumbers.length) {
+        await MutationPhoneNumber.editBulkPhoneNumber(_, {
+          phoneNumbers,
+          bookUuid: res.uuid,
+          userUuid: res.userUuid
+        })
+      }
+      return res
     } catch (error) {
       return {};
     }

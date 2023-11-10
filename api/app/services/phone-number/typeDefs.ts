@@ -18,9 +18,14 @@ export const typeDefs = `
       phoneNumber: String!
       userUuid: String!
     ): PhoneNumber!
+    editBulkPhoneNumber(
+      phoneNumbers: [PayloadPhoneNumber]
+      bookUuid: String
+      userUuid: String
+    ): [PhoneNumber!]!
     addBulkPhoneNumber(
-      phoneNumber: String
-      books: [String]
+      phoneNumbers: [String]
+      bookUuid: String
       userUuid: String
     ): [PhoneNumber!]!
     bulkPhoneNumber(
@@ -50,6 +55,13 @@ export const typeDefs = `
   type PhoneNumber {
     id: Int
     bookUuid: Book
+    phoneNumber: String
+    uuid: String
+    userUuid: String
+  }
+
+  input PayloadPhoneNumber {
+    id: Int
     phoneNumber: String
     uuid: String
     userUuid: String

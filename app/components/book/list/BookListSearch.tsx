@@ -3,7 +3,6 @@ import { FormControl, Grid, MenuItem, OutlinedInput, Select } from "@mui/materia
 
 function BookListView({
   loading,
-  loadingMore,
   orderBy,
   handleChangeSortBy,
   handleChangeSearch
@@ -33,7 +32,7 @@ function BookListView({
               labelId="book-list-label"
               id="book-list-sortby"
               value={orderBy}
-              disabled={loadingMore || loading}
+              disabled={loading}
               label="Sort By"
               onChange={handleChangeSortBy}
             >

@@ -8,7 +8,7 @@ import * as yup from "yup";
 import BookListModalEditContactView from "./BookListModalEditContactView";
 import { setSpaceToDash } from "helpers/mixins";
 import { GET_LIST_BOOKS, GET_BOOKS, PUT_BOOK } from "queries/book/queries";
-import { isEmpty } from "lodash";
+import { isEmpty, uniqBy } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
@@ -20,16 +20,20 @@ type Props = {
 type Payload = {
   field: {
     fullName: string,
-    phoneNumber: string
+    phoneNumbers: string[]
     email: string
   }
+}
+type PhoneNumbers = {
+  uuid: string,
+  phoneNumber: string
 }
 type PayloadProps = {
   userUuid: string,
   fullName: string,
   slug: string,
   uuid: string,
-  phoneNumber: string
+  phoneNumbers: PhoneNumbers[]
   email: string
 }
 const BookListModalEditContainer = (props: Props) => {
@@ -39,6 +43,7 @@ const BookListModalEditContainer = (props: Props) => {
     payload,
     onClose
   } = props
+  const [total, setTotal] = useState<number>(1)
   const [slug, setSlug] = useState<string>('');
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -64,14 +69,16 @@ const BookListModalEditContainer = (props: Props) => {
     field: {
       fullName: '',
       email: '',
-      phoneNumber: ''
+      phoneNumbers: [{
+        uuid: '',
+        phoneNumber: ''
+      }]
     }
   };
   useEffect(() => {
-    if (payload?.slug) {
+    if (payload?.slug && payload?.phoneNumbers) {
       setSlug(payload.slug)
       setValue('field', payload)
-
     }
     return () => {
       setLoadingSubmit(false);
@@ -95,25 +102,31 @@ const BookListModalEditContainer = (props: Props) => {
       field: yup.object({
         fullName: yup.string()
           .required('Full name is required')
-          .matches(/^'?\p{L}+(?:[' ]\p{L}+)*'?$/u, 'doesn’t have special Char'),
-        email: yup.string().required('Email is required'),
-        phoneNumber: yup.string().required('Phone number is required')
+          .matches(/^[a-zA-Z ]{2,30}$/, 'Name is invalid'),
+        email: yup.string()
+          .matches(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, 'Email is invalid'),
+        phoneNumbers: yup.array().of(
+          yup.object({
+            uuid: yup.string(),
+            phoneNumber: yup.string()
+            .required('Phone number is required')
+            .matches(/^(?:\+62|62|0)[2-9]\d{7,11}$/, 'Phone number is invalid')
+          })
+        )
       }),
     })
     .required();
   const handleSave = (val: Payload) => {
     let bool = true
-    const fullName: any = setSpaceToDash(val?.field?.fullName)
+    const fullName = val?.field?.fullName || ''
+    const tmpSlug: any = setSpaceToDash(fullName)
     const uuid: any = payload.uuid
     const email: any = val?.field?.email
-    const phoneNumber: any = val?.field?.phoneNumber
-    console.log('kenapa', loadingSubmit)
     if (loadingSubmit) {
       return
     }
-    console.log('woke')
     setLoadingSubmit(true);
-    setSlug(fullName)
+    setSlug(tmpSlug)
     if (isEmpty(val?.field)) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
       bool = false
@@ -127,18 +140,22 @@ const BookListModalEditContainer = (props: Props) => {
       setSpaceToDash(el.email) === email && el.uuid !== uuid)) > -1) {
       setError('field.email',  { type: "focus", message: 'Email already exists'});
       bool = false
-    } else if (books && books.length && Array.isArray(books) &&
-      books.indexOf((el: any) => (el?.phoneNumber && 
-      setSpaceToDash(el.phoneNumber) === phoneNumber && el.uuid !== uuid)) > -1) {
-      setError('field.phoneNumber',  { type: "focus", message: 'Phone number already exists'});
-      bool = false
+    }
+    const userUuid = payload.userUuid
+    let payloadPhoneNumber: any = uniqBy(val.field.phoneNumbers, 'phoneNumber')
+    if (payloadPhoneNumber && payloadPhoneNumber.length) {
+      payloadPhoneNumber = payloadPhoneNumber.map((el: any) => ({
+        phoneNumber: el.phoneNumber,
+        userUuid,
+        uuid: el.uuid
+      }))
     }
     if (bool) {
       const variables =  {
-        userUuid: payload.userUuid,
         uuid: payload.uuid,
+        userUuid,
         fullName: val.field.fullName,
-        phoneNumber: val.field.phoneNumber,
+        phoneNumbers: payloadPhoneNumber,
         email: val.field.email,
         slug: setSpaceToDash(val.field.fullName)
       }
@@ -177,6 +194,8 @@ const BookListModalEditContainer = (props: Props) => {
     loadingSubmit,
     error,
     control,
+    total,
+    setTotal,
     errorMessage,
     books
   };

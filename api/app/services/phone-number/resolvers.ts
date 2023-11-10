@@ -11,11 +11,11 @@ export const Query = {
     if (!uuid) {
       return {}
     }
-    const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
-    return await bookCollectionEntity.findOne({ where: { uuid: uuid } });
+    const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
+    return await phoneNumberEntity.findOne({ where: { uuid: uuid } });
   },
   getPhoneNumbers: async (_: any, args: Args): Promise<PhoneNumberResponse> => {
-    const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
+    const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
     const { offset = 0, limit = 10, uuid, orderBy } = args;
     const where = {}
     const order = {}
@@ -34,7 +34,7 @@ export const Query = {
         [orderBy]: 'DESC'
       })
     }
-    const [data, total] = await bookCollectionEntity.findAndCount({
+    const [data, total] = await phoneNumberEntity.findAndCount({
       where,
       order,
       take: limit,
@@ -63,139 +63,163 @@ export const Mutation = {
   addPhoneNumber: async (_: any, args: any) => {
     try {
       const { userUuid, bookUuid, phoneNumber } = args;
-      console.log('userUuid', userUuid)
-      const bookCollection = new PhoneNumberEntity()
-      bookCollection.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
-      bookCollection.uuid = v4()
-      bookCollection.bookUuid = bookUuid
-      bookCollection.phoneNumber = phoneNumber
-      const bookCollectionRepository = AppDataSource.getRepository(PhoneNumberEntity)
-      return await bookCollectionRepository.save(bookCollection);
+      const phoneNumberTable = new PhoneNumberEntity()
+      phoneNumberTable.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
+      phoneNumberTable.uuid = v4()
+      phoneNumberTable.bookUuid = bookUuid
+      phoneNumberTable.phoneNumber = phoneNumber
+      const phoneNumberTableRepository = AppDataSource.getRepository(PhoneNumberEntity)
+      return await phoneNumberTableRepository.save(phoneNumberTable);
     } catch (error) {
       return false;
     }
   },
   bulkPhoneNumber: async (_: any, args: any) => {
+    let arr = []
+    const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
+    try {
+      const { payload } = args;
+      for (let i = 0; i < payload.length; i++) {
+        const val = payload[i] || null
+        if (!val?.phoneNumber || !val?.bookUuid || !val?.userUuid) {
+          continue;
+        }
+        const el = {
+          userUuid: val.userUuid,
+          bookUuid: val.bookUuid,
+          phoneNumber: val.phoneNumber
+        }
+        const check =  await phoneNumberEntity.findOne({ 
+          where: {...el},
+          relations: {
+            bookUuid: true,
+          },
+        });
+        if (!check) {
+          const res = await Mutation.addPhoneNumber('', {
+            userUuid: val.userUuid,
+            bookUuid: val.bookUuid,
+            phoneNumber: val.phoneNumber
+          })
+          arr.push(res)
+        } else if (check && check?.uuid && val?.action === 'delete') {
+          await Mutation.deletePhoneNumber('', {
+            userUuid: val.userUuid,
+            uuid: check.uuid
+          })
+        } else if (check && val?.action === 'edit' && val?.uuid) {
+          const res = await Mutation.editPhoneNumber('', {
+            userUuid: val.userUuid,
+            bookUuid: val.bookUuid,
+            phoneNumber: val.phoneNumber,
+            uuid: val.uuid
+          })
+          arr.push(res)
+        } else if (check) {
+          arr.push({...check})
+        } else {
+          continue
+        }
+      }
+      return arr
+    } catch (error) {
+      return {};
+    }
+  },
+  editBulkPhoneNumber: async (_: any, args: any) => {
     try {
       let arr = []
-      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
-      try {
-        const { payload } = args;
-        for (let i = 0; i < payload.length; i++) {
-          const val = payload[i] || null
-          if (!val?.phoneNumber || !val?.bookUuid || !val?.userUuid) {
+      const { phoneNumbers, bookUuid, userUuid } = args;
+      if (phoneNumbers && phoneNumbers.length &&
+        bookUuid && Array.isArray(phoneNumbers) && userUuid) {
+        for (let i = 0; i < phoneNumbers.length; i++) {
+          let res = {}
+          const phoneNumber =  phoneNumbers[i] && typeof phoneNumbers[i] === 'string' ? 
+          phoneNumbers[i] : phoneNumbers[i]?.phoneNumber
+          if (!phoneNumber) {
+            continue;
+          } else if (!phoneNumbers[i]?.uuid && bookUuid && phoneNumber) {
+            res = await Mutation.addPhoneNumber('', {
+              userUuid,
+              bookUuid: {
+                uuid: bookUuid
+              },
+              phoneNumber
+            })
+          } else if (phoneNumbers[i]?.uuid) {
+            const el = {
+              uuid: phoneNumbers[i]?.uuid,
+              userUuid,
+              bookUuid: {
+                uuid: bookUuid
+              },
+              phoneNumber
+            }
+            res = await Mutation.editPhoneNumber('', el)
+            arr.push(res)
+          }
+        }
+      }
+      return arr
+    } catch (error) {
+      return {};
+    }
+  },
+  addBulkPhoneNumber: async (_: any, args: any) => {
+    try {
+      let arr = []
+      const { phoneNumbers, bookUuid, userUuid } = args;
+      if (phoneNumbers && phoneNumbers.length &&
+        bookUuid && Array.isArray(phoneNumbers) && userUuid) {
+        const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
+        for (let i = 0; i < phoneNumbers.length; i++) {
+          if (!phoneNumbers[i]) {
             continue;
           }
           const el = {
-            userUuid: val.userUuid,
+            userUuid,
             bookUuid: {
-              uuid: val.bookUuid
+              uuid: bookUuid
             },
-            phoneNumber: val.phoneNumber
+            phoneNumber: phoneNumbers[i]
           }
-          const check =  await bookCollectionEntity.findOne({ 
+          const check =  await phoneNumberEntity.findOne({ 
             where: {...el},
             relations: {
               bookUuid: true,
             },
           });
           if (!check) {
-            const res = await Mutation.addPhoneNumber('', {
-              userUuid: val.userUuid,
-              bookUuid: val.bookUuid,
-              phoneNumber: val.phoneNumber
-            })
+            const res = await Mutation.addPhoneNumber('', el)
             arr.push(res)
-          } else if (check && check?.uuid && val?.action === 'delete') {
-            await Mutation.deletePhoneNumber('', {
-              userUuid: val.userUuid,
-              uuid: check.uuid
-            })
-          } else if (check && val?.action === 'edit' && val?.uuid) {
-            const res = await Mutation.editPhoneNumber('', {
-              userUuid: val.userUuid,
-              bookUuid: val.bookUuid,
-              phoneNumber: val.phoneNumber,
-              uuid: val.uuid
-            })
-            arr.push(res)
-          } else if (check) {
-            arr.push({...check})
           } else {
-            continue
+            continue;
           }
         }
-        return arr
-      } catch (error) {
-        return {};
       }
+      return arr
     } catch (error) {
-      return false;
-    }
-  },
-  addBulkPhoneNumber: async (_: any, args: any) => {
-    try {
-      let arr = []
-      try {
-        const { phoneNumber, books, userUuid } = args;
-        if (phoneNumber && phoneNumber.length &&
-          books && Array.isArray(books) && books.length && userUuid) {
-          const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
-          for (let i = 0; i < books.length; i++) {
-            if (!books[i]) {
-              continue;
-            }
-              const el = {
-                userUuid: userUuid,
-                bookUuid: {
-                  uuid: books[i]
-                },
-                phoneNumber
-              }
-              const check =  await bookCollectionEntity.findOne({ 
-                where: {...el},
-                relations: {
-                  bookUuid: true,
-                },
-              });
-              if (!check) {
-                const res = await Mutation.addPhoneNumber('', {
-                  userUuid: userUuid,
-                  bookUuid: books[i],
-                  phoneNumber
-                })
-                arr.push(res)
-              } else {
-                continue;
-              }
-            }
-        }
-        return arr
-      } catch (error) {
-        return {};
-      }
-    } catch (error) {
-      return false;
+      return {};
     }
   },
   editPhoneNumber: async (_: any, args: any) => {
     try {
       const { userUuid, uuid, bookUuid, phoneNumber } = args;
-      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
-      const bookCollection = await bookCollectionEntity.findOneBy({
+      const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
+      const phoneNumberTable = await phoneNumberEntity.findOneBy({
         uuid: uuid,
         userUuid: userUuid
       })
-      if (!bookCollection || !uuid || uuid.length == 0) {
+      if (!phoneNumberTable || !uuid || uuid.length == 0) {
         return {};
       }
       if (bookUuid) {
-        bookCollection.bookUuid = bookUuid
+        phoneNumberTable.bookUuid = bookUuid
       }
       if (phoneNumber) {
-        bookCollection.phoneNumber = phoneNumber
+        phoneNumberTable.phoneNumber = phoneNumber
       }
-      return await bookCollectionEntity.save(bookCollection);
+      return await phoneNumberEntity.save(phoneNumberTable);
     } catch (error) {
       return {};
     }
@@ -203,16 +227,16 @@ export const Mutation = {
   deletePhoneNumber: async (_: any, args: any) => {
     try {
       const { uuid, userUuid } = args;
-      const bookCollectionEntity = AppDataSource.getRepository(PhoneNumberEntity)
-      const bookCollection = await bookCollectionEntity.findOneBy({
+      const phoneNumberEntity = AppDataSource.getRepository(PhoneNumberEntity)
+      const phoneNumberTable = await phoneNumberEntity.findOneBy({
         uuid: uuid,
         userUuid: userUuid
       })
-      if (!bookCollection || !uuid || uuid.length == 0) {
+      if (!phoneNumberTable || !uuid || uuid.length == 0) {
         return false;
       }
-      bookCollection.softRemove()
-      await bookCollectionEntity.save(bookCollection)
+      phoneNumberTable.softRemove()
+      await phoneNumberEntity.save(phoneNumberTable)
       return true;
     } catch (error) {
       return false;

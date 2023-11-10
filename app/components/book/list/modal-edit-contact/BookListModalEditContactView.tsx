@@ -1,6 +1,6 @@
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { InputLabel, FormHelperText, Grid, Typography } from '@mui/material';
+import { InputLabel, FormHelperText, Grid, Typography, ButtonGroup } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Controller } from "react-hook-form";
 import React from "react";
@@ -8,10 +8,12 @@ type BookListModalEditContactViewProps = {
   handleSubmit: any,
   handleSave: (payload: React.FormEvent<HTMLFormElement>) => void,
   handleCloseModal: () => void,
+  setTotal: (val: number) => void,
   isDisabled?: boolean,
   loadingSubmit: boolean,
-  errorMessage: string,
+  total: number,
   control: any,
+  errorMessage: string,
   errors: any,
   error: any
 }
@@ -22,10 +24,59 @@ export const BookListModalEditContactView = ({
   isDisabled,
   control,
   loadingSubmit,
-  errorMessage,
   error,
+  errorMessage,
+  setTotal,
+  total,
   errors
 }: BookListModalEditContactViewProps) => {
+  const disabled = errorMessage && errorMessage.length ? true : false
+  const formPhoneNumber = () => {
+    let dom = []
+    for (let i = 0; i < total; i++) {
+      dom.push(
+        <div key={i}>
+          <InputLabel>Phone Number</InputLabel>
+          <FormControl
+            fullWidth
+            key={i}
+            variant="outlined"
+            sx={{
+              marginBottom: 2,
+            }}
+          >
+            <ButtonGroup size="small" aria-label="small outlined button group">
+              <Button disabled={total < 2} onClick={() => setTotal(total-1)}>-</Button>
+              <Controller
+                name={`field.phoneNumbers.${i}.phoneNumber`}
+                defaultValue={''}
+                control={control}
+                render={({ field }: any) => (
+                  <OutlinedInput
+                    id={`book-detail-modal-create-phone_number_${i}`}
+                    defaultValue="Small"
+                    placeholder='08*******'
+                    disabled={disabled}
+                    variant={"standard"}
+                    size="small"
+                    sx={
+                      {
+                        width: '100%'
+                      }
+                    }
+                    {...field}
+                  />)
+                }
+              />
+              {<Button disabled={total === 2} onClick={() => setTotal(total+1)}>+</Button>}
+            </ButtonGroup>
+          <FormHelperText error={true}>{errors.field?.phoneNumbers?.[i]?.phoneNumber?.message}</FormHelperText>
+        </FormControl>
+      </div>
+      )
+    }
+    return (dom)
+  }
   if (error) return <p>Error : {error.message ? error.message : 'Error'}</p>;
   return (
       <Grid
@@ -62,7 +113,7 @@ export const BookListModalEditContactView = ({
                 <OutlinedInput
                   id="book-detail-modal-create-full_name"
                   label="Title"
-                  disabled={errorMessage}
+                  disabled={disabled}
                   defaultValue="Small"
                   variant={"standard"}
                   size="small"
@@ -71,32 +122,6 @@ export const BookListModalEditContactView = ({
               }
             />
             <FormHelperText error={true}>{errors.field?.name?.message}</FormHelperText>
-          </FormControl>
-          <FormControl
-            fullWidth
-            variant="outlined"
-            sx={{
-              marginTop: 2,
-            }}
-          >
-            <InputLabel>Phone Number</InputLabel>
-            <Controller
-              name="field.phoneNumber"
-              defaultValue={''}
-              control={control}
-              render={({ field }: any) => (
-                <OutlinedInput
-                  id="book-detail-modal-create-phone_number"
-                  label="Phone Number"
-                  defaultValue="Small"
-                  variant={"standard"}
-                  disabled={errorMessage}
-                  size="small"
-                  {...field}
-                />)
-              }
-            />
-            <FormHelperText error={true}>{errors.field?.phoneNumber?.message}</FormHelperText>
           </FormControl>
           <FormControl
             fullWidth
@@ -117,7 +142,7 @@ export const BookListModalEditContactView = ({
                   label="Email"
                   defaultValue="Small"
                   variant={"standard"}
-                  disabled={errorMessage}
+                  disabled={disabled}
                   size="small"
                   {...field}
                 />)
@@ -125,6 +150,9 @@ export const BookListModalEditContactView = ({
             />
             <FormHelperText error={true}>{errors.field?.email?.message}</FormHelperText>
           </FormControl>
+          {
+            formPhoneNumber()
+          }
           <div
             style={{
               display: 'flex',

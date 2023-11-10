@@ -68,7 +68,6 @@ export const Mutation = {
   addBookCollection: async (_: any, args: any) => {
     try {
       const { userUuid, bookUuid, collectionUuid } = args;
-      console.log('userUuid', userUuid)
       const bookCollection = new BookCollectionEntity()
       bookCollection.userUuid = userUuid || 'de4e31bd-393d-40f7-86ae-ce8e25d81b00'
       bookCollection.uuid = v4()
@@ -81,116 +80,108 @@ export const Mutation = {
     }
   },
   bulkBookCollection: async (_: any, args: any) => {
+    let arr = []
+    const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
     try {
-      let arr = []
-      const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
-      try {
-        const { payload } = args;
-        for (let i = 0; i < payload.length; i++) {
-          const val = payload[i] || null
-          if (!val?.collectionUuid?.uuid || !val?.bookUuid || !val?.userUuid) {
-            continue;
-          }
-          const collectionUuid = val?.collectionUuid?.uuid || val?.collectionUuid
-          const el = {
-            userUuid: val.userUuid,
-            bookUuid: {
-              uuid: val.bookUuid
-            },
-            collectionUuid: {
-              uuid: collectionUuid
-            }
-          }
-          const check =  await bookCollectionEntity.findOne({ 
-            where: {...el},
-            relations: {
-              bookUuid: true,
-            },
-          });
-          if (!check) {
-            const res = await Mutation.addBookCollection('', {
-              userUuid: val.userUuid,
-              bookUuid: val.bookUuid,
-              collectionUuid: collectionUuid
-            })
-            arr.push(res)
-          } else if (check && check?.uuid && val?.action === 'delete') {
-            await Mutation.deleteBookCollection('', {
-              userUuid: val.userUuid,
-              uuid: check.uuid
-            })
-          } else if (check && val?.action === 'edit' && val?.uuid) {
-            const res = await Mutation.editBookCollection('', {
-              userUuid: val.userUuid,
-              bookUuid: val.bookUuid,
-              collectionUuid,
-              uuid: val.uuid
-            })
-            arr.push(res)
-          } else if (check) {
-            arr.push({...check})
-          } else {
-            continue
+      const { payload } = args;
+      for (let i = 0; i < payload.length; i++) {
+        const val = payload[i] || null
+        if (!val?.collectionUuid?.uuid || !val?.bookUuid || !val?.userUuid) {
+          continue;
+        }
+        const collectionUuid = val?.collectionUuid?.uuid || val?.collectionUuid
+        const el = {
+          userUuid: val.userUuid,
+          bookUuid: {
+            uuid: val.bookUuid
+          },
+          collectionUuid: {
+            uuid: collectionUuid
           }
         }
-        return arr
-      } catch (error) {
-        return {};
+        const check =  await bookCollectionEntity.findOne({ 
+          where: {...el},
+          relations: {
+            bookUuid: true,
+          },
+        });
+        if (!check) {
+          const res = await Mutation.addBookCollection('', {
+            userUuid: val.userUuid,
+            bookUuid: val.bookUuid,
+            collectionUuid: collectionUuid
+          })
+          arr.push(res)
+        } else if (check && check?.uuid && val?.action === 'delete') {
+          await Mutation.deleteBookCollection('', {
+            userUuid: val.userUuid,
+            uuid: check.uuid
+          })
+        } else if (check && val?.action === 'edit' && val?.uuid) {
+          const res = await Mutation.editBookCollection('', {
+            userUuid: val.userUuid,
+            bookUuid: val.bookUuid,
+            collectionUuid,
+            uuid: val.uuid
+          })
+          arr.push(res)
+        } else if (check) {
+          arr.push({...check})
+        } else {
+          continue
+        }
       }
+      return arr
     } catch (error) {
-      return false;
+      return {};
     }
   },
   addBulkBookCollection: async (_: any, args: any) => {
+    let arr = []
     try {
-      let arr = []
-      try {
-        const { collections, books, userUuid } = args;
-        if (collections && Array.isArray(collections) && collections.length &&
-          books && Array.isArray(books) && books.length && userUuid) {
-          const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
-          for (let i = 0; i < books.length; i++) {
-            if (!books[i]) {
+      const { collections, books, userUuid } = args;
+      if (collections && Array.isArray(collections) && collections.length &&
+        books && Array.isArray(books) && books.length && userUuid) {
+        const bookCollectionEntity = AppDataSource.getRepository(BookCollectionEntity)
+        for (let i = 0; i < books.length; i++) {
+          if (!books[i]) {
+            continue;
+          }
+          for (let k = 0; k < collections.length; k++) {
+            if (!collections[k]) {
               continue;
             }
-            for (let k = 0; k < collections.length; k++) {
-              if (!collections[k]) {
-                continue;
+            const el = {
+              userUuid: userUuid,
+              bookUuid: {
+                uuid: books[i]
+              },
+              collectionUuid: {
+                uuid: collections[k]
               }
-              const el = {
+            }
+            const check =  await bookCollectionEntity.findOne({ 
+              where: {...el},
+              relations: {
+                bookUuid: true,
+              },
+            });
+            if (!check) {
+              const res = await Mutation.addBookCollection('', {
                 userUuid: userUuid,
-                bookUuid: {
-                  uuid: books[i]
-                },
-                collectionUuid: {
-                  uuid: collections[k]
-                }
-              }
-              const check =  await bookCollectionEntity.findOne({ 
-                where: {...el},
-                relations: {
-                  bookUuid: true,
-                },
-              });
-              if (!check) {
-                const res = await Mutation.addBookCollection('', {
-                  userUuid: userUuid,
-                  bookUuid: books[i],
-                  collectionUuid: collections[k]
-                })
-                arr.push(res)
-              } else {
-                continue;
-              }
+                bookUuid: books[i],
+                collectionUuid: collections[k]
+              })
+              arr.push(res)
+            } else {
+              continue;
             }
           }
         }
-        return arr
-      } catch (error) {
-        return {};
       }
+      return arr
     } catch (error) {
-      return false;
+      return {};
     }
   },
   editBookCollection: async (_: any, args: any) => {

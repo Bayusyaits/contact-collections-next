@@ -204,7 +204,7 @@ export const PUT_BOOK = gql`
     $uuid: String!
     $fullName: String!
     $userUuid: String!
-    $phoneNumbers: [String!]
+    $phoneNumbers: [PayloadPhoneNumber!]
     $image: String
     $address: String
     $description: String

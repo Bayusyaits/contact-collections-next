@@ -25,7 +25,6 @@ const BookListContainer: React.FC<BookProps> = ({
   const [offset, setOffset] = useState(0);
   const [slug, setSlug] = useState('');
   const [orderBy, setSortBy] = useState('createdDate');
-  const [loadingMore, setLoadingMore] = useState(false);
   const [values, setValues] = useState<string[]>([]);
   const { openModal } = useModal();
   const { closeModal, onSubmitModal } = useContext(ModalPopupDispatchContext);
@@ -63,35 +62,12 @@ const BookListContainer: React.FC<BookProps> = ({
       limit,
     },
   }) 
-  const handleLoadMore = () => {
-    setLoadingMore(true);
-    fetchMore({
-      variables: {
-        offset,
-        limit,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        setLoadingMore(false);
-        if (!fetchMoreResult) {
-          return prev;
-        }
-        return {
-          getBooks: {
-            __typename: prev.getBooks.__typename,
-            items: [...prev.getBooks.items, ...fetchMoreResult.getBooks.items],
-            hasMore: fetchMoreResult.getBooks.hasMore,
-          },
-        };
-      },
-    });
-  };
   const openModalAddCollection = debounce(() => {
     if (!values || values.length == 0) {
       return
     }
     const onFinish = (val: Payload) => {
       onSubmitModal();
-      console.log('onFinish', val)
       addBulkBookCollection({
         variables: {
             collections: val.collections,
@@ -245,18 +221,18 @@ const BookListContainer: React.FC<BookProps> = ({
     openModalAddCollection,
     openModalAddContact
   }
-  const handlePagination = () => {
-    console.log('handlePagination')
-    setLimit(offset+1)
+  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+    let tmpTotal = data?.getBooks?.total || 0
+    const tmpLimit = Math.abs(tmpTotal - limit)
+    setLimit(tmpLimit > 10 ? limit : tmpLimit + 1)
+    setOffset(value - 1)
   }
   const handlerList = {
-    handleLoadMore,
     error,
     loading,
     data,
-    loadMore,
-    loadingMore,
     type,
+    limit,
     openModalDeleteContact,
     openModalEditContact,
     handlePagination,
@@ -267,7 +243,7 @@ const BookListContainer: React.FC<BookProps> = ({
     slug,
     orderBy,
     loading,
-    loadingMore,
+    offset,
     handleChangeSearch,
     handleChangeSortBy
   }

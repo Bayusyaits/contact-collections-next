@@ -61,7 +61,7 @@ export const BookDetailModalCreateContactView = ({
                 />)
               }
             />
-            <FormHelperText error={true}>{errors.field?.name?.message}</FormHelperText>
+            <FormHelperText error={true}>{errors.field?.fullName?.message}</FormHelperText>
           </FormControl>
           <FormControl
             fullWidth
