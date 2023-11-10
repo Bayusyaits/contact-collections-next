@@ -99,6 +99,17 @@ export const Mutation = {
           status, description, gallery, userUuid, slug
         }
       } = args;
+      if (!fullName || !phoneNumbers || phoneNumbers.length === 0 || !userUuid) {
+        return
+      }
+      const bookEntity = AppDataSource.getRepository(BookEntity)
+      const check = await bookEntity.findOneBy({
+        fullName,
+        userUuid
+      })
+      if (!isEmpty(check)) {
+        return check
+      }
       const book = new BookEntity()
       book.uuid = v4()
       if (address) {

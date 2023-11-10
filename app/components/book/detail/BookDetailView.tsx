@@ -1,6 +1,6 @@
 import React from "react";
 import ErrorNotFound from 'components/error/not-found';
-import { Chip, Grid, Paper, Typography } from "@mui/material";
+import { Chip, Grid, Paper, Typography, Button } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import { isEmpty } from "lodash";
 import { Box, Container } from "@mui/system";
@@ -10,6 +10,8 @@ function BookListView({
   data, 
   error, 
   loading,
+  openModalEditContact,
+  openModalDeleteContact
 }: any) {
 
   if (loading) return <p>Loading...</p>;
@@ -20,7 +22,10 @@ function BookListView({
   const { 
     fullName, 
     email,
-    description,
+    uuid,
+    slug,
+    phoneNumbers,
+    userUuid,
     bookCategories, 
     bookCollections,
   }: any = data.getBook
@@ -54,13 +59,6 @@ function BookListView({
                     </Item>
                   </Grid>
                 </Grid>
-                <Typography 
-                  variant="h5" 
-                  color="inherit" 
-                  paragraph
-                >
-                  {description}
-                </Typography>
                 <Grid 
                   container
                 >
@@ -96,6 +94,35 @@ function BookListView({
                   : null}
                 </Grid>
               </Box>
+              <Button 
+                variant="outline"
+                id={`btn-delete-${uuid}`}
+                onClick={() => openModalDeleteContact({
+                  uuid,
+                  fullName, 
+                  slug,
+                  phoneNumbers,
+                  userUuid
+                })}
+                disabled={loading}
+              >
+                Delete
+              </Button>
+              <Button 
+                variant="outline"
+                id={`btn-edit-${uuid}`}
+                onClick={() => openModalEditContact({
+                  uuid,
+                  fullName, 
+                  slug,
+                  phoneNumbers,
+                  userUuid,
+                  email
+                })}
+                disabled={loading}
+              >
+                Edit
+              </Button>
             </Grid>
           </Grid>
       </Container>

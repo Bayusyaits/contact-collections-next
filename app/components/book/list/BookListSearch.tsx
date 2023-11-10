@@ -1,5 +1,5 @@
 import React from "react";
-import { FormControl, Grid, MenuItem, OutlinedInput, Select } from "@mui/material";
+import { Card, CardContent, FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, TextField } from "@mui/material";
 
 function BookListView({
   loading,
@@ -9,39 +9,36 @@ function BookListView({
 }: any) {
   return (
     <>
-      <Grid 
-        container 
-        rowSpacing={3} 
-        columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
-        justifyContent="start"
-        alignItems="start"
+      <Grid container spacing={2}
+        sx={{
+          marginBottom: '2rem'
+        }}
       >
-        
-        <Grid 
-          sx={{
-            position: 'relative'
-          }}
-          item lg={4} xl={4} xs={4} sm={4} md={4}>
-          <input
-            id="book-list-slug"
-            type="text"
-            onChange={handleChangeSearch}
-          />
+        <Grid item xs={6}>
           <FormControl fullWidth>
-            <Select
-              labelId="book-list-label"
-              id="book-list-sortby"
-              value={orderBy}
-              disabled={loading}
-              label="Sort By"
-              onChange={handleChangeSortBy}
-            >
-              <MenuItem value={'createdDate'}>Created Date</MenuItem>
-              <MenuItem value={'fullName'}>Full Name</MenuItem>
-            </Select>
+            <TextField
+              id="book-list-slug"
+              type="text"
+              placeholder="Search"
+              onChange={handleChangeSearch}
+            />
           </FormControl>
         </Grid>
-      </Grid>      
+        <Grid item xs={6}>
+        <FormControl fullWidth>
+          <Select
+            id="book-list-sortby"
+            value={orderBy}
+            disabled={loading}
+            placeholder="Sort By"
+            onChange={handleChangeSortBy}
+          >
+            <MenuItem value={'createdDate'}>Created Date</MenuItem>
+            <MenuItem value={'fullName'}>Full Name</MenuItem>
+          </Select>
+        </FormControl>
+        </Grid>
+      </Grid>
     </>
   );
 }

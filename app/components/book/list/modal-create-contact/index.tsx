@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from '@apollo/react-hooks';
@@ -8,7 +8,7 @@ import * as yup from "yup";
 import BookListModalCreateContactView from "./BookListModalCreateContactView";
 import { setSpaceToDash } from "helpers/mixins";
 import { GET_BOOKS, GET_LIST_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
-import { uniq } from "lodash";
+import { debounce, uniq } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
@@ -29,8 +29,9 @@ const BookListModalCreateContainer = (props: Props) => {
     onFinish,
     onClose
   } = props
+  const [isDisabled, setDisabled] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(1)
-  const [slug, setSlug] = useState<string>('');
+  const [slug, setSlug] = useState<string | null | undefined>('');
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
     fetchPolicy: "cache-and-network",
@@ -40,7 +41,7 @@ const BookListModalCreateContainer = (props: Props) => {
       slug
     },
   }) 
-  const books = data && data.getListBooks ? data.getListBooks : []
+  const books = data?.getListBooks || []
   const [addBook] = useMutation(POST_CREATE_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
@@ -58,6 +59,7 @@ const BookListModalCreateContainer = (props: Props) => {
   useEffect(() => {
     return () => {
       setLoadingSubmit(false);
+      setDisabled(false)
     }
   }, [])
   const schema = yup
@@ -76,30 +78,56 @@ const BookListModalCreateContainer = (props: Props) => {
       }),
     })
     .required();
-  const handleSave = (val: Payload) => {
+
+  const {
+    watch,
+    setError,
+    control,
+    handleSubmit,
+    formState,
+    reset
+  } = useForm({
+    defaultValues,
+    resolver: yupResolver(schema),
+  });
+  const watchAll = watch()
+  const checkName = useCallback(debounce((val: string | null) => {
+    if (val && val.length > 1) {
+      setSlug(setSpaceToDash(val))
+    }
+  }, 1000), [])
+  useEffect(() => {
+    setDisabled(false)
+    if (books && books.length && slug) {
+      setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
+      setDisabled(true)
+    }
+  }, [books])
+  useEffect(() => {
+    checkName(watchAll.field.fullName)
+  }, [watchAll.field.fullName])
+  const handleSave = useCallback((val: Payload) => {
     let bool = true
     const fullName = val?.field?.fullName || ''
-    const tmpSlug: any = setSpaceToDash(fullName)
     const email: any = setSpaceToDash(val?.field?.email)
     if (loadingSubmit) {
       return
     }
     setLoadingSubmit(true);
-    setSlug(tmpSlug)
     if (!val?.field) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
-      bool = false
-    } else if (books && books.length && Array.isArray(books) && val?.field?.fullName && 
+      setDisabled(true)
+    } else if (books && books.length && Array.isArray(books) && fullName && 
       books.indexOf((el: any) => el?.fullName && 
         setSpaceToDash(el.fullName) === fullName) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
-      bool = false
+      setDisabled(true)
     } else if (email &&
       books && books.length && Array.isArray(books) && val?.field?.email && 
       books.indexOf((el: any) => el?.email && 
         setSpaceToDash(el.email) === email) > -1) {
       setError('field.email',  { type: "focus", message: 'Email already exists'});
-      bool = false
+      setDisabled(true)
     }
     if (bool) {
       const variables =  {
@@ -119,20 +147,10 @@ const BookListModalCreateContainer = (props: Props) => {
       });
     }
     setLoadingSubmit(false);
-  }
+  }, [])
   const handleCloseModal = () => {
     onClose()
   }
-  const {
-    setError,
-    control,
-    handleSubmit,
-    formState,
-    reset
-  } = useForm({
-    defaultValues,
-    resolver: yupResolver(schema),
-  });
   const { errors, isDirty } = formState;
   const obj = {
     handleSubmit,
@@ -141,7 +159,7 @@ const BookListModalCreateContainer = (props: Props) => {
     isDirty,
     errors,
     loading,
-    isDisabled: false,
+    isDisabled,
     total,
     setTotal,
     loadingSubmit,

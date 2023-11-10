@@ -15,9 +15,10 @@ import { createPersistedQueryLink } from '@apollo/client/link/persisted-queries'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { createHttpLink } from 'apollo-link-http';
 import { REACT_APP_API_URL } from "config";
-import { AppBar, Grid, Toolbar } from "@mui/material";
-import Typography from '@mui/material/Typography';
+import { Grid } from "@mui/material";
 import { Box, Container } from "@mui/system";
+import HeaderView from "base-components/header";
+import FooterView from "base-components/footer";
 
 const httpLink = createPersistedQueryLink({ sha256 }).concat(
   new createHttpLink({ uri: REACT_APP_API_URL }),
@@ -87,24 +88,7 @@ export default function MyApp({
           <Layout>
             <ThemeProvider theme={theme}>
               <CssBaseline />
-              <AppBar position="relative">
-                <Toolbar
-                  sx={{
-                    pr: '24px', // keep right padding when drawer closed
-                  }}
-                >
-                  <Typography
-                    component="h1"
-                    variant="h6"
-                    color="inherit"
-                    noWrap
-                    sx={{ flexGrow: 1 }}
-                  >
-                    Contact List
-                  </Typography>
-
-                </Toolbar>
-              </AppBar>
+              <HeaderView/>
               <Box>
                 <Container maxWidth="lg" sx={{ px: '24px', mt: 4, mb: 4 }}>
                   <Grid container spacing={1}>
@@ -112,6 +96,7 @@ export default function MyApp({
                   </Grid>
                 </Container>
               </Box>
+              <FooterView/>
             </ThemeProvider>
           </Layout>
       </CacheProvider>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation } from '@apollo/react-hooks';
@@ -8,7 +8,7 @@ import * as yup from "yup";
 import BookListModalEditContactView from "./BookListModalEditContactView";
 import { setSpaceToDash } from "helpers/mixins";
 import { GET_LIST_BOOKS, GET_BOOKS, PUT_BOOK } from "queries/book/queries";
-import { isEmpty, uniqBy } from "lodash";
+import { debounce, isEmpty, uniqBy } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
@@ -43,8 +43,9 @@ const BookListModalEditContainer = (props: Props) => {
     payload,
     onClose
   } = props
+  const [isDisabled, setDisabled] = useState<boolean>(false)
   const [total, setTotal] = useState<number>(1)
-  const [slug, setSlug] = useState<string>('');
+  const [slug, setSlug] = useState<string | null | undefined>('');
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isFirst, setFirst] = useState(false);
@@ -84,8 +85,17 @@ const BookListModalEditContainer = (props: Props) => {
       setLoadingSubmit(false);
       setFirst(false)
       setErrorMessage('')
+      setDisabled(false)
     }
   }, [])
+  useEffect(() => {
+    setDisabled(false)
+    if (books && books.length && 
+      books.findIndex((el: PayloadProps) => (el.uuid !== payload.uuid)) > -1) {
+      setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
+      setDisabled(true)
+    }
+  }, [books])
   useEffect(() => {
     if (!isFirst) {
       setFirst(true)
@@ -116,30 +126,49 @@ const BookListModalEditContainer = (props: Props) => {
       }),
     })
     .required();
+  const {
+    watch,
+    setValue,
+    setError,
+    control,
+    handleSubmit,
+    formState,
+    reset
+  } = useForm({
+    defaultValues,
+    resolver: yupResolver(schema),
+  });
+  const watchAll = watch()
+  const checkName = useCallback(debounce((val: string | null) => {
+    if (val && val.length > 1) {
+      setSlug(setSpaceToDash(val))
+    }
+  }, 1000), [])
+  useEffect(() => {
+    checkName(watchAll.field.fullName)
+  }, [watchAll.field.fullName])
   const handleSave = (val: Payload) => {
     let bool = true
     const fullName = val?.field?.fullName || ''
-    const tmpSlug: any = setSpaceToDash(fullName)
     const uuid: any = payload.uuid
     const email: any = val?.field?.email
     if (loadingSubmit) {
       return
     }
     setLoadingSubmit(true);
-    setSlug(tmpSlug)
     if (isEmpty(val?.field)) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
-      bool = false
+      setDisabled(true)
     } else if (books && books.length && Array.isArray(books) &&
       books.indexOf((el: any) => (el?.fullName && 
         setSpaceToDash(el.fullName) === fullName && el.uuid !== uuid)) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
-      bool = false
+      setDisabled(true)
     } else if (books && books.length && Array.isArray(books) &&
       books.indexOf((el: any) => (el?.email && 
       setSpaceToDash(el.email) === email && el.uuid !== uuid)) > -1) {
       setError('field.email',  { type: "focus", message: 'Email already exists'});
-      bool = false
+      setDisabled(true)
     }
     const userUuid = payload.userUuid
     let payloadPhoneNumber: any = uniqBy(val.field.phoneNumbers, 'phoneNumber')
@@ -171,17 +200,6 @@ const BookListModalEditContainer = (props: Props) => {
   const handleCloseModal = () => {
     onClose()
   }
-  const {
-    setError,
-    setValue,
-    control,
-    handleSubmit,
-    formState,
-    reset
-  } = useForm({
-    defaultValues,
-    resolver: yupResolver(schema),
-  });
   const { errors, isDirty } = formState;
   const obj = {
     handleSubmit,
@@ -190,7 +208,7 @@ const BookListModalEditContainer = (props: Props) => {
     isDirty,
     errors,
     loading,
-    isDisabled: false,
+    isDisabled,
     loadingSubmit,
     error,
     control,

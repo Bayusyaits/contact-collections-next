@@ -1,7 +1,7 @@
 import React from "react";
 import ErrorNotFound from 'components/error/not-found';
 import Button from '@mui/material/Button';
-import { Card, CardActionArea, CardContent, Chip, Grid, Pagination, Typography } from "@mui/material";
+import { Card, CardActionArea, CardActions, CardContent, Chip, Grid, Pagination, Typography } from "@mui/material";
 import Link from "next/link";
 
 function BookListView({
@@ -45,7 +45,7 @@ function BookListView({
                 position: 'relative'
               }}
               item lg={4} xl={4} xs={4} sm={4} md={4} key={uuid}>
-              <Card>
+              <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <input
                   className="form-control"
                   type={'checkbox'}
@@ -60,16 +60,20 @@ function BookListView({
                 <CardActionArea>
                   <CardContent
                     sx={{ 
-                      overflow: 'hidden'
+                      overflow: 'hidden',
+                      flexGrow: 1
                     }}
                   >
                     <Link
-                        id={`card-book--${slug}`}
-                        href={`/book/${slug}`}
-                        title="Account"
-                        className="footer-icon-wrap font-weight-normal btn-transparent d-flex flex-column text-center align-items-center cursor-pointer small text-gray"
+                      id={`card-book--${slug}`}
+                      href={`/book/${slug}`}
+                      title="Account"
+                      style={{
+                        textDecoration: 'none',
+                        color: '#242526'
+                      }}
                       >
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography gutterBottom variant="h5" component="h2">
                       {fullName}
                     </Typography>
                     <Typography variant="body2" component="div">
@@ -109,7 +113,7 @@ function BookListView({
                           <Chip label={categoryUuid.name} sx={{ marginRight: 2 }} /></Grid>) : 
                           (<div key={uuid}></div>)
                         )) 
-                      : '-'}
+                      : ''}
                     </Grid>
                     <Grid
                       item
@@ -128,11 +132,24 @@ function BookListView({
                           <Chip label={collectionUuid.name} sx={{ marginRight: 2 }} /></Grid>) : 
                           (<div key={uuid}></div>)
                         )) 
-                      : '-'}
+                      : ''}
                     </Grid>
+                  </CardContent>
+                  <CardActions
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column'
+                    }}
+                  >
                     <Button 
-                      variant="outline"
+                      variant="contained" 
+                      color="error"
                       id={`btn-delete-${uuid}`}
+                      sx={{
+                        marginBottom: '0.5rem',
+                        width: '100%',
+                        display: 'block'
+                      }}
                       onClick={() => openModalDeleteContact({
                         uuid,
                         fullName, 
@@ -145,7 +162,8 @@ function BookListView({
                       Delete
                     </Button>
                     <Button 
-                      variant="outline"
+                      variant="outlined" 
+                      color="info"
                       id={`btn-edit-${uuid}`}
                       onClick={() => openModalEditContact({
                         uuid,
@@ -155,11 +173,16 @@ function BookListView({
                         userUuid,
                         email
                       })}
+                      sx={{
+                        marginBottom: '0.75rem',
+                        width: '100%',
+                        display: 'block'
+                      }}
                       disabled={loading}
                     >
                       Edit
                     </Button>
-                  </CardContent>
+                  </CardActions>
                 </CardActionArea>
               </Card>
             </Grid>

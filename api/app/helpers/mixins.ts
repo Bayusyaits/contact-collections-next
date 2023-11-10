@@ -1,4 +1,4 @@
-export const setSpaceToDash = (val: string, operator: string = '-') => {
+export const setSpaceToDash = (val?: string | null, operator: string = '-') => {
   if (!val) {
     return
   }

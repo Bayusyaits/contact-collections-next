@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import { useQuery, useMutation } from '@apollo/client';
 import { Grid } from "@mui/material";
 import BookListSearchView from "./BookListSearch";
@@ -199,14 +199,14 @@ const BookListContainer: React.FC<BookProps> = ({
       },
     });
   }, 1000);
-  const handleChangeSearch = debounce((e: any) => {
+  const handleChangeSearch = useCallback(debounce((e: any) => {
     const {
       target: {
         value
       }
     } = e
     setSlug(value)
-  }, 500)
+  }, 500), [])
   const handleChangeSortBy = (e: any) => {
     const {
       target: {
