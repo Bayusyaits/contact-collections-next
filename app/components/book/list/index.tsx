@@ -19,7 +19,6 @@ import { GET_LIST_COLLECTIONS } from "queries/collection/queries";
 const BookListContainer: React.FC<BookProps> = ({
   type,
   fetchLimit = 10,
-  loadMore = true,
 }) => {
   const [limit, setLimit] = useState(fetchLimit);
   const [offset, setOffset] = useState(0);

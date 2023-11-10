@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { useQuery } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import BookDetailView from "./BookDetailView";
 import BookDetailModal from "../modal";
 import BookDetailModalCreateContact from "./modal-create-contact";
@@ -10,8 +10,10 @@ import BookDetailSidebarView from "./BookDetailSidebarView";
 import { useModal, ModalPopupDispatchContext } from "hoc/withModal";
 import { useRouter } from "next/router";
 import { Grid } from "@mui/material";
-import { debounce } from "lodash";
+import { debounce, isEmpty } from "lodash";
 import { GET_BOOK } from "queries/book/queries";
+import { POST_ADD_BULK_BOOK_COLLECTION } from "queries/book_collection/queries";
+import { Payload } from "../list/interfaces";
 
 type BookProps = {};
 const BookDetailContainer: React.FC<BookProps> = () => {
@@ -22,6 +24,13 @@ const BookDetailContainer: React.FC<BookProps> = () => {
     }
   }: any = router
   const { openModal } = useModal();
+  const [addBulkBookCollection] = useMutation(POST_ADD_BULK_BOOK_COLLECTION, {
+    fetchPolicy: "no-cache",
+    refetchQueries: [
+      GET_BOOK, // DocumentNode object parsed with gql
+      'getBook' // Query name
+    ],
+  });
   const { closeModal, onSubmitModal } = useContext(ModalPopupDispatchContext);
   const { loading, error, data } = useQuery(GET_BOOK, {
     fetchPolicy: "cache-and-network",
@@ -34,8 +43,21 @@ const BookDetailContainer: React.FC<BookProps> = () => {
     console.log('handleRemoveCollection', slug)
   }
   const openModalAddCollection = debounce(() => {
-    const onFinish = () => {
+    const onFinish = (val: Payload) => {
       onSubmitModal();
+      const books = []
+      const book = data?.getBook || {}
+      if (!isEmpty(book)) {
+        books.push(book.uuid)
+      }
+      addBulkBookCollection({
+        variables: {
+            collections: val.collections,
+            books,
+            userUuid: '1091357a-3269-11ee-be56-0242ac120002'
+          } 
+        },
+      )
     };
     const onSwitch = () => {
       closeModal();

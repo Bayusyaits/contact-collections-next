@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useQuery } from '@apollo/client';
@@ -7,14 +7,22 @@ import * as yup from "yup";
 import BookModalView from "./BookModalView";
 import { Props } from '../list/interfaces';
 import { GET_LIST_COLLECTIONS } from "queries/collection/queries";
+import { isEmpty } from "lodash";
 
 const BookModalContainer = (props: Props) => {
   const {
     orderBy = 'createdDate',
     onFinish,
-    onSwitch
+    onSwitch,
+    field
   } = props
-  const [list, setList] = useState([])
+  useEffect(() => {
+    if (field && !isEmpty(field) && field?.bookCollections &&
+    field?.bookCollections.length) {
+      setValue('field.collections', field.bookCollections.map(({collectionUuid
+      }: any) => (collectionUuid.uuid)))
+    }
+  }, [])
   const { loading, error, data } = useQuery(GET_LIST_COLLECTIONS, {
     variables: {
       orderBy,
@@ -42,13 +50,9 @@ const BookModalContainer = (props: Props) => {
   const handleSwitchModal = () => {
     onSwitch()
   }
-  useEffect(() => {
-    if (data?.getListCollection) {
-      setList(data.getListCollection);
-    }
-  }, [data]);
 
   const {
+    setValue,
     register,
     control,
     handleSubmit,
