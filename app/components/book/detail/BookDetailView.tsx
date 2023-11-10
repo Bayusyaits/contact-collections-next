@@ -1,10 +1,10 @@
 import React from "react";
 import ErrorNotFound from 'components/error/not-found';
-import { CardMedia, Chip, Grid, Paper, Typography } from "@mui/material";
+import { Chip, Grid, Paper, Typography } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import { isEmpty } from "lodash";
 import { Box, Container } from "@mui/system";
-import StarIcon from '@mui/icons-material/Star';
+import { setSpaceToDash } from "helpers/mixins";
 
 function BookListView({
   data, 
@@ -18,13 +18,11 @@ function BookListView({
     return <ErrorNotFound />;
   }
   const { 
-    id, 
-    name, 
+    fullName, 
+    email,
     description,
-    image, 
     bookCategories, 
     bookCollections,
-    publishDate, 
   }: any = data.getBook
   const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -33,22 +31,9 @@ function BookListView({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   }));
-  const starIcon = (val: number) => {
-    const arr = []
-    const num = val && val < 5 ? val : 5
-    for (let i = 0; i < num; i++) {
-      arr.push(<StarIcon fontSize="small" key={i}></StarIcon>)
-    }
-    return (arr)
-  }
   return (
     <>
-      <Container id={id} maxWidth="md">
-          <CardMedia
-            component="img"
-            image={`${image}`}
-            alt={name}
-          />
+      <Container id={setSpaceToDash(fullName)} maxWidth="md">
           <Grid container>
             <Grid item>
               <Box
@@ -58,13 +43,13 @@ function BookListView({
                 }}
               >
                 <Typography component="h1" variant="h3" color="inherit" gutterBottom>
-                  {name}
+                  {fullName}
                 </Typography>
                 <Grid container spacing={2} sx={{ marginBottom: 5 }}>
                   <Grid item xs={3}>
                     <Item>
                       <Typography component="small" color="inherit" gutterBottom>
-                        Publish Date: {publishDate}
+                        Email: {email}
                       </Typography>
                     </Item>
                   </Grid>

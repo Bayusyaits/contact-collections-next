@@ -1,9 +1,12 @@
 import React, { useContext } from "react";
 import { useQuery } from '@apollo/client';
 import BookDetailView from "./BookDetailView";
+import BookDetailModal from "../modal";
+import BookDetailModalCreateContact from "./modal-create-contact";
+import BookDetailModalDeleteContact from "./modal-delete-contact";
+import BookDetailModalEditContact from "./modal-edit-contact";
+import BookDetailModalCreateCollection from "../modal-create-collection";
 import BookDetailSidebarView from "./BookDetailSidebarView";
-import BookDetailModal from "./modal";
-import BookDetailModalCreateCollection from "./modal-create-collection";
 import { useModal, ModalPopupDispatchContext } from "hoc/withModal";
 import { useRouter } from "next/router";
 import { Grid } from "@mui/material";
@@ -53,29 +56,6 @@ const BookDetailContainer: React.FC<BookProps> = () => {
       },
     });
   }, 1000);
-  const openModalAddContact = debounce(() => {
-    const onFinish = () => {
-      onSubmitModal();
-    };
-    const onSwitch = () => {
-      closeModal();
-      openModalCreateContact()
-    }
-    openModal({
-      title: "Add to Contact",
-      hideClose: false,
-      component: () => (
-        <BookDetailModal
-          onFinish={onFinish}
-          onSwitch={onSwitch}
-          field={{...data.getBook}}
-        />
-      ),
-      onClose: () => {
-        closeModal();
-      },
-    });
-  }, 1000);
   const openModalCreateCollection = debounce(() => {
     const onFinish = () => {
       onSubmitModal();
@@ -99,22 +79,64 @@ const BookDetailContainer: React.FC<BookProps> = () => {
       },
     });
   }, 1000);
-  const openModalCreateContact = debounce(() => {
+  const openModalAddContact = debounce(() => {
     const onFinish = () => {
       onSubmitModal();
-      openModalAddContact()
     };
-    const onSwitch = () => {
+    const onClose = () => {
       closeModal();
-      openModalAddContact()
     }
     openModal({
-      title: "Create Contact",
+      title: "Create New Contact",
       hideClose: false,
       component: () => (
-        <BookDetailModalCreateCollection
+        <BookDetailModalCreateContact
           onFinish={onFinish}
-          onSwitch={onSwitch}
+          onClose={onClose}
+        />
+      ),
+      onClose: () => {
+        closeModal();
+      },
+    });
+  }, 1000);
+  const openModalEditContact = debounce((payload: any) => {
+    const onFinish = () => {
+      onSubmitModal();      
+    };
+    const onClose = () => {
+      closeModal();
+    }
+    openModal({
+      title: "Edit Contact",
+      hideClose: false,
+      component: () => (
+        <BookDetailModalEditContact
+          onFinish={onFinish}
+          onClose={onClose}
+          payload={payload}
+        />
+      ),
+      onClose: () => {
+        closeModal();
+      },
+    });
+  }, 1000);
+  const openModalDeleteContact = debounce((payload: any) => {
+    const onFinish = () => {
+      onSubmitModal();      
+    };
+    const onClose = () => {
+      closeModal();
+    }
+    openModal({
+      title: "Delete Contact",
+      hideClose: false,
+      component: () => (
+        <BookDetailModalDeleteContact
+          onFinish={onFinish}
+          onClose={onClose}
+          payload={payload}
         />
       ),
       onClose: () => {
@@ -135,10 +157,12 @@ const BookDetailContainer: React.FC<BookProps> = () => {
   const handlerList = {
     error,
     loading,
-    data
+    data,
+    openModalDeleteContact,
+    openModalEditContact,
   }
 
-  const handlerCollection = {
+  const handleSidebar = {
     handleRemoveCollection,
     handleAddCollection,
     handleAddContact,
@@ -156,7 +180,7 @@ const BookDetailContainer: React.FC<BookProps> = () => {
         alignItems="start"
       >
       <Grid item lg={3} xl={3} xs={12} sm={12} md={3}>
-        <BookDetailSidebarView {...handlerCollection} />
+        <BookDetailSidebarView {...handleSidebar} />
       </Grid>
       <Grid item lg={9} xl={9} xs={12} sm={12} md={9}>
         <BookDetailView {...handlerList} />

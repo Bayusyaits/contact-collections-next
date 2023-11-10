@@ -5,33 +5,50 @@ import { useMutation } from '@apollo/react-hooks';
 import { useQuery } from '@apollo/client';
 import * as yup from "yup";
 
-import BookDetailModalCreateContactView from "./BookDetailModalCreateContactView";
+import BookDetailModalEditContactView from "./BookDetailModalEditContactView";
 import { setSpaceToDash } from "helpers/mixins";
-import { GET_BOOKS, GET_LIST_BOOKS, POST_CREATE_BOOK } from "queries/book/queries";
-import { uniq } from "lodash";
+import { GET_LIST_BOOKS, GET_BOOK, PUT_BOOK } from "queries/book/queries";
+import { isEmpty, uniqBy } from "lodash";
 
 type Props = {
   onFinish: (payload: any) => void
   orderBy?: string,
+  payload: PayloadProps,
   onClose: () => void
 };
 
 type Payload = {
   field: {
     fullName: string,
-    phoneNumbers: [string]
+    phoneNumbers: string[]
     email: string
   }
 }
-const BooDetailModalCreateContainer = (props: Props) => {
+type PhoneNumbers = {
+  uuid: string,
+  phoneNumber: string
+}
+type PayloadProps = {
+  userUuid: string,
+  fullName: string,
+  slug: string,
+  uuid: string,
+  phoneNumbers: PhoneNumbers[]
+  email: string
+}
+const BookDetailModalEditContainer = (props: Props) => {
   const {
     orderBy = 'createdDate',
     onFinish,
+    payload,
     onClose
   } = props
   const [total, setTotal] = useState<number>(1)
   const [slug, setSlug] = useState<string>('');
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isFirst, setFirst] = useState(false);
+
   const { loading, error, data } = useQuery(GET_LIST_BOOKS, {
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: 'cache-first',
@@ -40,26 +57,46 @@ const BooDetailModalCreateContainer = (props: Props) => {
       slug
     },
   }) 
-  const books = data && data.getListBooks ? data.getListBooks : []
-  const [addBook] = useMutation(POST_CREATE_BOOK, {
+  const books = data && data.getBook ? data.getBook : []
+  const [editBook] = useMutation(PUT_BOOK, {
     fetchPolicy: "no-cache",
     refetchQueries: [
-      GET_BOOKS, // DocumentNode object parsed with gql
-      'getBooks' // Query fullName
+      GET_BOOK, // DocumentNode object parsed with gql
+      'getBook' // Query fullName
     ],
   });
   let defaultValues = {
     field: {
       fullName: '',
       email: '',
-      phoneNumbers: ['']
+      phoneNumbers: [{
+        uuid: '',
+        phoneNumber: ''
+      }]
     }
   };
   useEffect(() => {
+    if (payload?.slug && payload?.phoneNumbers) {
+      setSlug(payload.slug)
+      setValue('field', payload)
+    }
     return () => {
       setLoadingSubmit(false);
+      setFirst(false)
+      setErrorMessage('')
     }
   }, [])
+  useEffect(() => {
+    if (!isFirst) {
+      setFirst(true)
+      if (!books || books.length === 0) {
+        setErrorMessage('Contact not found')
+      }
+    } else if (books && books.length > 0 && errorMessage) {
+      setErrorMessage('')
+      setFirst(false)
+    }
+  }, [books])
   const schema = yup
     .object({
       field: yup.object({
@@ -69,9 +106,12 @@ const BooDetailModalCreateContainer = (props: Props) => {
         email: yup.string()
           .matches(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/, 'Email is invalid'),
         phoneNumbers: yup.array().of(
-          yup.string()
-          .required('Phone number is required')
-          .matches(/^(?:\+62|62|0)[2-9]\d{7,11}$/, 'Phone number is invalid')
+          yup.object({
+            uuid: yup.string(),
+            phoneNumber: yup.string()
+            .required('Phone number is required')
+            .matches(/^(?:\+62|62|0)[2-9]\d{7,11}$/, 'Phone number is invalid')
+          })
         )
       }),
     })
@@ -80,38 +120,46 @@ const BooDetailModalCreateContainer = (props: Props) => {
     let bool = true
     const fullName = val?.field?.fullName || ''
     const tmpSlug: any = setSpaceToDash(fullName)
-    const email: any = setSpaceToDash(val?.field?.email)
+    const uuid: any = payload.uuid
+    const email: any = val?.field?.email
     if (loadingSubmit) {
       return
     }
     setLoadingSubmit(true);
     setSlug(tmpSlug)
-    if (!val?.field) {
+    if (isEmpty(val?.field)) {
       setError('field.fullName',  { type: "focus", message: 'Field is required'});
       bool = false
-    } else if (books && books.length && Array.isArray(books) && val?.field?.fullName && 
-      books.indexOf((el: any) => el?.fullName && 
-        setSpaceToDash(el.fullName) === fullName) > -1) {
+    } else if (books && books.length && Array.isArray(books) &&
+      books.indexOf((el: any) => (el?.fullName && 
+        setSpaceToDash(el.fullName) === fullName && el.uuid !== uuid)) > -1) {
       setError('field.fullName',  { type: "focus", message: 'Full name already exists'});
       bool = false
-    } else if (email &&
-      books && books.length && Array.isArray(books) && val?.field?.email && 
-      books.indexOf((el: any) => el?.email && 
-        setSpaceToDash(el.email) === email) > -1) {
+    } else if (books && books.length && Array.isArray(books) &&
+      books.indexOf((el: any) => (el?.email && 
+      setSpaceToDash(el.email) === email && el.uuid !== uuid)) > -1) {
       setError('field.email',  { type: "focus", message: 'Email already exists'});
       bool = false
     }
+    const userUuid = payload.userUuid
+    let payloadPhoneNumber: any = uniqBy(val.field.phoneNumbers, 'phoneNumber')
+    if (payloadPhoneNumber && payloadPhoneNumber.length) {
+      payloadPhoneNumber = payloadPhoneNumber.map((el: any) => ({
+        phoneNumber: el.phoneNumber,
+        userUuid,
+        uuid: el.uuid
+      }))
+    }
     if (bool) {
       const variables =  {
-        userUuid: 'de4e31bd-393d-40f7-86ae-ce8e25d81b00',
-        type: 'contact',
-        status: 'online',
+        uuid: payload.uuid,
+        userUuid,
         fullName: val.field.fullName,
-        phoneNumbers: uniq(val.field.phoneNumbers),
+        phoneNumbers: payloadPhoneNumber,
         email: val.field.email,
         slug: setSpaceToDash(val.field.fullName)
       }
-      addBook({
+      editBook({
         variables 
       }).then(() => {
         onFinish(variables)
@@ -125,6 +173,7 @@ const BooDetailModalCreateContainer = (props: Props) => {
   }
   const {
     setError,
+    setValue,
     control,
     handleSubmit,
     formState,
@@ -142,14 +191,15 @@ const BooDetailModalCreateContainer = (props: Props) => {
     errors,
     loading,
     isDisabled: false,
-    total,
-    setTotal,
     loadingSubmit,
     error,
     control,
+    total,
+    setTotal,
+    errorMessage,
     books
   };
-  return <BookDetailModalCreateContactView {...obj} />;
+  return <BookDetailModalEditContactView {...obj} />;
 };
 
-export default BooDetailModalCreateContainer;
+export default BookDetailModalEditContainer;

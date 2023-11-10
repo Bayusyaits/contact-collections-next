@@ -5,11 +5,11 @@ import BookListSearchView from "./BookListSearch";
 import BookListView from "./BookList";
 import { useModal, ModalPopupDispatchContext } from "hoc/withModal";
 import { debounce } from "lodash";
-import BookListModal from "./modal";
+import BookListModal from "../modal";
 import BookListModalCreateContact from "./modal-create-contact";
 import BookListModalDeleteContact from "./modal-delete-contact";
 import BookListModalEditContact from "./modal-edit-contact";
-import BookListModalCreateCollection from "./modal-create-collection";
+import BookListModalCreateCollection from "../modal-create-collection";
 import BookListSidebarView from "./BookListSidebarView";
 import { BookProps, Payload } from './interfaces';
 import { GET_BOOKS } from "queries/book/queries";
@@ -133,7 +133,7 @@ const BookListContainer: React.FC<BookProps> = ({
     });
   }, 1000);
   const openModalEditContact = debounce((payload: any) => {
-    const onFinish = (val: Payload) => {
+    const onFinish = () => {
       onSubmitModal();      
     };
     const onClose = () => {
@@ -155,7 +155,7 @@ const BookListContainer: React.FC<BookProps> = ({
     });
   }, 1000);
   const openModalDeleteContact = debounce((payload: any) => {
-    const onFinish = (val: Payload) => {
+    const onFinish = () => {
       onSubmitModal();      
     };
     const onClose = () => {

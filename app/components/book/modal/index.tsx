@@ -4,11 +4,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useQuery } from '@apollo/client';
 import * as yup from "yup";
 
-import BookListModalView from "./BookListModalView";
-import { Props } from '../interfaces';
+import BookModalView from "./BookModalView";
+import { Props } from '../list/interfaces';
 import { GET_LIST_COLLECTIONS } from "queries/collection/queries";
 
-const BookListModalContainer = (props: Props) => {
+const BookModalContainer = (props: Props) => {
   const {
     orderBy = 'createdDate',
     onFinish,
@@ -71,7 +71,7 @@ const BookListModalContainer = (props: Props) => {
     handleSwitchModal,
     collections: data && data.getListCollection ? data.getListCollection : []
   };
-  return <BookListModalView {...obj} />;
+  return <BookModalView {...obj} />;
 };
 
-export default BookListModalContainer;
+export default BookModalContainer;

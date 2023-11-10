@@ -1,10 +1,10 @@
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
-import { InputLabel, FormHelperText, Grid, ButtonGroup } from '@mui/material';
+import { InputLabel, FormHelperText, Grid, Typography, ButtonGroup } from '@mui/material';
 import Button from '@mui/material/Button';
 import { Controller } from "react-hook-form";
 import React from "react";
-type BookDetailModalCreateContactViewProps = {
+type BooDetailModalEditContactViewProps = {
   handleSubmit: any,
   handleSave: (payload: React.FormEvent<HTMLFormElement>) => void,
   handleCloseModal: () => void,
@@ -13,10 +13,11 @@ type BookDetailModalCreateContactViewProps = {
   loadingSubmit: boolean,
   total: number,
   control: any,
+  errorMessage: string,
   errors: any,
   error: any
 }
-export const BookDetailModalCreateContactView = ({
+export const BooDetailModalEditContactView = ({
   handleSubmit,
   handleSave,
   handleCloseModal,
@@ -24,10 +25,12 @@ export const BookDetailModalCreateContactView = ({
   control,
   loadingSubmit,
   error,
+  errorMessage,
   setTotal,
   total,
   errors
-}: BookDetailModalCreateContactViewProps) => {
+}: BooDetailModalEditContactViewProps) => {
+  const disabled = errorMessage && errorMessage.length ? true : false
   const formPhoneNumber = () => {
     let dom = []
     for (let i = 0; i < total; i++) {
@@ -45,7 +48,7 @@ export const BookDetailModalCreateContactView = ({
             <ButtonGroup size="small" aria-label="small outlined button group">
               <Button disabled={total < 2} onClick={() => setTotal(total-1)}>-</Button>
               <Controller
-                name={`field.phoneNumbers.${i}`}
+                name={`field.phoneNumbers.${i}.phoneNumber`}
                 defaultValue={''}
                 control={control}
                 render={({ field }: any) => (
@@ -53,6 +56,7 @@ export const BookDetailModalCreateContactView = ({
                     id={`book-detail-modal-create-phone_number_${i}`}
                     defaultValue="Small"
                     placeholder='08*******'
+                    disabled={disabled}
                     variant={"standard"}
                     size="small"
                     sx={
@@ -66,7 +70,7 @@ export const BookDetailModalCreateContactView = ({
               />
               {<Button disabled={total === 2} onClick={() => setTotal(total+1)}>+</Button>}
             </ButtonGroup>
-          <FormHelperText error={true}>{errors.field?.phoneNumbers?.[i]?.message}</FormHelperText>
+          <FormHelperText error={true}>{errors.field?.phoneNumbers?.[i]?.phoneNumber?.message}</FormHelperText>
         </FormControl>
       </div>
       )
@@ -84,6 +88,12 @@ export const BookDetailModalCreateContactView = ({
           marginTop: 2
         }}
       >
+        {
+          errorMessage ? 
+          (<Typography gutterBottom variant="small" component="div">
+          {errorMessage}
+          </Typography>) : (<></>)
+        }
         <form
           onSubmit={handleSubmit(handleSave)}
           style={{
@@ -103,6 +113,7 @@ export const BookDetailModalCreateContactView = ({
                 <OutlinedInput
                   id="book-detail-modal-create-full_name"
                   label="Title"
+                  disabled={disabled}
                   defaultValue="Small"
                   variant={"standard"}
                   size="small"
@@ -110,7 +121,7 @@ export const BookDetailModalCreateContactView = ({
                 />)
               }
             />
-            <FormHelperText error={true}>{errors.field?.fullName?.message}</FormHelperText>
+            <FormHelperText error={true}>{errors.field?.name?.message}</FormHelperText>
           </FormControl>
           <FormControl
             fullWidth
@@ -129,9 +140,9 @@ export const BookDetailModalCreateContactView = ({
                 <OutlinedInput
                   id="book-detail-modal-create-email"
                   label="Email"
-                  placeholder='Email'
                   defaultValue="Small"
                   variant={"standard"}
+                  disabled={disabled}
                   size="small"
                   {...field}
                 />)
@@ -161,21 +172,25 @@ export const BookDetailModalCreateContactView = ({
             >
               Cancel
             </Button>
-            <Button
-              disabled={isDisabled || loadingSubmit}
-              type="submit"
-              variant={'contained'}
-              className="btn btn-prime py-3 px-5 w-full xl:w-50 xl:mr-3 align-top"
-              sx={{
-                marginTop: 2,
-              }}
-            >
-              Submit
-            </Button>
+            {
+              !errorMessage ? (
+                <Button
+                  disabled={isDisabled || loadingSubmit}
+                  type="submit"
+                  variant={'contained'}
+                  className="btn btn-prime py-3 px-5 w-full xl:w-50 xl:mr-3 align-top"
+                  sx={{
+                    marginTop: 2,
+                  }}
+                >
+                  Submit
+                </Button>
+              ) : (<></>)
+            }
           </div>
         </form>
       </Grid>
   );
 };
 
-export default BookDetailModalCreateContactView;
+export default BooDetailModalEditContactView;
