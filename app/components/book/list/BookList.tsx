@@ -8,6 +8,9 @@ function BookListView({
   data, 
   error, 
   loading,
+  limit,
+  page,
+  take,
   openModalDeleteContact,
   openModalEditContact,
   handlePagination,
@@ -191,7 +194,7 @@ function BookListView({
         }
       </Grid>
       {
-        getBooks?.total >  getBooks.limit && (<Grid 
+        getBooks?.total >  limit && (<Grid 
           container 
           rowSpacing={1} 
           columnSpacing={{ xs: 1, sm: 2, md: 3, lg: 3 }}
@@ -202,8 +205,8 @@ function BookListView({
           }}
         >
             <Pagination
-              count={Math.ceil(Math.abs(data.getBooks.total / data.getBooks.limit))}
-              page={data.getBooks.offset + 1}
+              count={Math.ceil(Math.abs(data.getBooks.total / take))}
+              page={page}
               onChange={handlePagination} 
             />
         </Grid>)

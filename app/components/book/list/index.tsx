@@ -20,6 +20,8 @@ const BookListContainer: React.FC<BookProps> = ({
   type,
   fetchLimit = 10,
 }) => {
+  const [page, setPage] = useState(1)
+  const [take, setTake] = useState(fetchLimit);
   const [limit, setLimit] = useState(fetchLimit);
   const [offset, setOffset] = useState(0);
   const [slug, setSlug] = useState('');
@@ -221,10 +223,9 @@ const BookListContainer: React.FC<BookProps> = ({
     openModalAddContact
   }
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-    let tmpTotal = data?.getBooks?.total || 0
-    const tmpLimit = Math.abs(tmpTotal - limit)
-    setLimit(tmpLimit > 10 ? limit + 1 : tmpLimit + 1)
-    setOffset(value - 1)
+    setLimit(take)
+    setOffset(Math.ceil(take * (value - 1)))
+    setPage(value)
   }
   useEffect(() => {
     if (slug && limit > 10) {
@@ -238,6 +239,8 @@ const BookListContainer: React.FC<BookProps> = ({
     data,
     type,
     limit,
+    page,
+    take,
     openModalDeleteContact,
     openModalEditContact,
     handlePagination,

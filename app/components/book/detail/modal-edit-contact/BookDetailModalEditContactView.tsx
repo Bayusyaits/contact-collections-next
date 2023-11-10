@@ -36,7 +36,6 @@ export const BooDetailModalEditContactView = ({
     for (let i = 0; i < total; i++) {
       dom.push(
         <div key={i}>
-          <InputLabel>Phone Number</InputLabel>
           <FormControl
             fullWidth
             key={i}
@@ -75,7 +74,12 @@ export const BooDetailModalEditContactView = ({
       </div>
       )
     }
-    return (dom)
+    return (
+      <>
+        <InputLabel>Phone Number</InputLabel>
+        { dom }
+      </>
+    )
   }
   if (error) return <p>Error : {error.message ? error.message : 'Error'}</p>;
   return (

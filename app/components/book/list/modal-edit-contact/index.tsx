@@ -82,6 +82,7 @@ const BookListModalEditContainer = (props: Props) => {
     if (payload?.slug && payload?.phoneNumbers) {
       setSlug(payload.slug)
       setValue('field', payload)
+      setTotal(payload.phoneNumbers.length)
     }
     return () => {
       setLoadingSubmit(false);

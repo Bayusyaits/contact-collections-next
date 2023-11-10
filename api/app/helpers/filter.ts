@@ -39,7 +39,7 @@ export const filterItems = (
   }
   const hasMore = offset + limit < filteredItems.length;
 
-  filteredItems = filteredItems.slice(offset, offset + limit);
+  // filteredItems = filteredItems.slice(offset, offset + limit);
   return { items: filteredItems, hasMore, offset };
 };
 
