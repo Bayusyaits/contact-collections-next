@@ -44,7 +44,7 @@ function BookListView({
               sx={{
                 position: 'relative'
               }}
-              item lg={4} xl={4} xs={4} sm={4} md={4} key={uuid}>
+              item lg={4} xl={4} xs={12} sm={6} md={6} key={uuid}>
               <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 <input
                   className="form-control"

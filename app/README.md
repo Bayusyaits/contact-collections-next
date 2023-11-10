@@ -39,7 +39,3 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 
-#dont to to run
-Run the command below to install and configure husky and lint-staged
-npx husky-init
-npx mrm@2 lint-staged

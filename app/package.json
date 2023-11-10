@@ -12,8 +12,7 @@
     "check-lint": "eslint . --ext ts --ext tsx --ext js",
     "lint:fix": "eslint --fix '**/*.{js,jsx,ts,tsx,json}'",
     "test": "yarn lint-staged && yarn check-lint && yarn check-types",
-    "format": "prettier --write .",
-    "prepare": "husky install"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@apollo/react-hooks": "^4.0.0",
@@ -64,7 +63,6 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-sonarjs": "~0.10.0",
-    "husky": "^8.0.3",
     "react-hot-loader": "^4.13.1",
     "url-loader": "^4.1.1"
   },

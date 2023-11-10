@@ -23,6 +23,9 @@ $ git commit -m "chore: update npm dependency to the latest"
 # open folder app
 $ cd app
 
+# copy env
+$ sudo cp .env.example .env
+
 # install dependencies
 $ yarn
 
