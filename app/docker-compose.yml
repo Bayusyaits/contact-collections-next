@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+  contact-collection:
+    image: "docker.cicd-jfrog.co.id/nextjs/contact-collection:latest"
+    restart: always
+    ports:
+      - 3003:3003
+    env_file:
+      - file-compose.env

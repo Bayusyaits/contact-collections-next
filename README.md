@@ -1,5 +1,5 @@
 project: contact-collection
-
+ref: bayusyaits.medium.com
 
 # Specify the type of commit:
 > feat: The new feature you're adding to a particular application
@@ -17,7 +17,7 @@ project: contact-collection
 $ git commit -m "chore: update npm dependency to the latest"
 ```
 
-## Build Setup App
+## 1 Build Setup App
 
 ```bash
 # open folder app
@@ -39,9 +39,34 @@ $ yarn lint:fix
 
 # run prettier
 $ yarn format
+
+## docker
+# build
+$ docker build -t nextjs/contact-collection:1.0.0 .
+# run
+$ docker run -d -p 3003:3003 nextjs/contact-collection:1.0.0
+
 ```
 
-## Build Setup Api (graphql)
+
+## 2 Running SQL
+
+```bash
+# open folder app
+$ cd db_phone_book
+
+# copy query
+# run & paste query in sequel ace
+$ yarn format
+
+## docker
+# build
+$ docker build -t mysql/db_phone_book:1.0.0 .
+# run
+$ docker run mysql/db_phone_book:1.0.0
+```
+
+## 3 Build Setup Api (graphql)
 
 ```bash
 # open folder api
@@ -60,16 +85,9 @@ $ yarn lint:fix
 
 # run prettier
 $ yarn format
-```
-
-
-## Running SQL
-
-```bash
-# open folder app
-$ cd db_phone_book
-
-# copy query
-# run & paste query in sequel ace
-$ yarn format
+## docker
+# build
+$ docker build -t nodejs/api-app:1.0.0 .
+# run
+$ docker run -d -p 4003:4003 nodejs/api-app:1.0.0
 ```

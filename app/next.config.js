@@ -22,7 +22,13 @@ const nextConfig = {
   experimental: {
     appDir: true,
     allowMiddlewareResponseBody: true,
+    incrementalCacheHandlerPath: require.resolve('./cache-handler.js'),
+    isrMemoryCacheSize: 0, // disable default in-memory caching
   },
+  // generateBuildId: async () => {
+    // This could be anything, using the latest git hash
+    // return process.env.GIT_HASH
+  // },
   env: {
     STRIPE_PUBLIC_KEY: 'your_stripe_public_key',
     API_URL: 'http://localhost:4003/graphql',
