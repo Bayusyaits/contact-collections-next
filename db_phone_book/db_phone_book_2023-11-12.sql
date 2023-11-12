@@ -1,0 +1,364 @@
+# ************************************************************
+# Sequel Ace SQL dump
+# Version 20050
+#
+# https://sequel-ace.com/
+# https://github.com/Sequel-Ace/Sequel-Ace
+#
+# Host: localhost (MySQL 8.1.0)
+# Database: db_phone_book
+# Generation Time: 2023-11-12 06:43:28 +0000
+# ************************************************************
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+SET NAMES utf8mb4;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE='NO_AUTO_VALUE_ON_ZERO', SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Dump of table book
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `book`;
+
+CREATE TABLE `book` (
+  `description` text,
+  `address` text,
+  `type` char(20) DEFAULT NULL,
+  `gallery` text,
+  `image` varchar(255) DEFAULT NULL,
+  `slug` char(60) NOT NULL,
+  `status` enum('offline','online') NOT NULL DEFAULT 'online',
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `uuid` varchar(100) NOT NULL,
+  `userUuid` char(100) DEFAULT NULL,
+  `fullName` char(100) DEFAULT NULL,
+  `email` char(100) DEFAULT NULL,
+  PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `book` WRITE;
+/*!40000 ALTER TABLE `book` DISABLE KEYS */;
+
+INSERT INTO `book` (`description`, `address`, `type`, `gallery`, `image`, `slug`, `status`, `createdDate`, `updateDate`, `deletedDate`, `uuid`, `userUuid`, `fullName`, `email`)
+VALUES
+	(NULL,NULL,'contact',NULL,NULL,'contact-baru','online','2023-11-10 21:17:18.937156','2023-11-10 21:18:33.000000','2023-11-10 21:18:33.000000','01f248a2-5c02-4cb8-abb4-f2982544902d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Contact Baru','contact@agenlaku.com'),
+	(NULL,NULL,'contact',NULL,NULL,'agen-laku','online','2023-11-10 21:38:14.607296','2023-11-10 21:38:35.000000',NULL,'0c5e03cc-5287-4c0b-8b43-996f30990522','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Agen Laku','cs@agenlaku.com'),
+	(NULL,NULL,'contact',NULL,NULL,'contoh','online','2023-11-10 19:47:11.921371','2023-11-10 19:49:43.000000','2023-11-10 19:49:43.000000','0eadb730-aa7e-4547-8c54-f404589b22d4','de4e31bd-393d-40f7-86ae-ce8e25d81b00','contoh','contoh@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'name','online','2023-11-10 07:49:45.873723','2023-11-10 07:49:45.873723',NULL,'1cdf9218-dab5-4346-8f9c-d8d86677b1f0','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Name','bady@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'www','online','2023-11-08 19:53:32.239883','2023-11-10 21:15:45.000000','2023-11-10 21:15:45.000000','1e156023-ed55-4965-9f11-832b3d0156da','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Www','asa@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'boke','online','2023-11-08 20:05:51.177585','2023-11-10 21:19:39.000000','2023-11-10 21:19:39.000000','2ad4ac25-bf1b-4cce-b818-14e901886440','de4e31bd-393d-40f7-86ae-ce8e25d81b00','boke','boke@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bayu-syaits','online','2023-11-10 20:08:31.789487','2023-11-10 21:16:58.000000',NULL,'3310a555-a60b-45a4-958c-dba3a6f2319a','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Bayu Syaits','bayusyaits@agenlaku.com'),
+	(NULL,NULL,'contact',NULL,NULL,'hai','online','2023-11-10 06:48:47.848534','2023-11-10 20:29:54.000000','2023-11-10 20:29:54.000000','37a954c5-a898-4921-a877-ea65bf8543f5','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Hai','082347234'),
+	(NULL,NULL,'contact',NULL,NULL,'knp','online','2023-11-08 19:50:11.045753','2023-11-10 21:35:43.000000','2023-11-10 21:35:43.000000','41c7c166-1c19-4abe-966f-296446664b7f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Ada','asa@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'aaa','online','2023-11-10 05:53:19.480733','2023-11-10 21:13:30.000000','2023-11-10 21:13:30.000000','4af809ed-8d13-4e02-91ed-c6f5df17f892','de4e31bd-393d-40f7-86ae-ce8e25d81b00','aaa','asas@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'albert','online','2023-11-10 19:38:29.459742','2023-11-10 20:20:28.000000','2023-11-10 20:20:28.000000','545bc4a2-916c-48fc-ab46-3dd10f024294','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Albert','albert@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bayu','online','2023-11-10 20:01:11.960622','2023-11-10 20:01:22.000000',NULL,'5a3e0c95-e55d-4643-8309-9b4965f6520b','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Bayu','bayusyaits@gmail.com'),
+	(NULL,NULL,'contact',NULL,NULL,'subur','online','2023-11-10 21:38:57.544982','2023-11-10 21:38:57.544982',NULL,'5b82eb81-a8cb-4761-ac86-d482fb696942','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Subur','subur@agen.com'),
+	(NULL,NULL,'contact',NULL,NULL,'sumbagyo','online','2023-11-10 07:59:04.748075','2023-11-10 20:24:53.000000','2023-11-10 20:24:53.000000','619e3c17-39d2-444f-866b-f7e0c0f74e98','de4e31bd-393d-40f7-86ae-ce8e25d81b00','sumbagyo','sumba@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'data-baru','online','2023-11-10 21:16:04.072708','2023-11-10 21:18:39.000000','2023-11-10 21:18:39.000000','6471fb3e-dbc1-41ef-8c01-fe5637b12691','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Data Baru','data@baru.com'),
+	(NULL,NULL,'contact',NULL,NULL,'malih','online','2023-11-09 20:03:26.815215','2023-11-10 21:13:45.000000','2023-11-10 21:13:45.000000','674ae4ce-ec37-43dc-a204-3250f6fee671','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Malih','malih@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'wawa','online','2023-11-10 13:44:05.554901','2023-11-10 21:19:18.000000','2023-11-10 21:19:18.000000','6b11e62d-fc37-4ea0-8f59-3318b509ab4f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','wawa','wawa@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'alia','online','2023-11-10 20:07:42.499344','2023-11-10 20:07:42.499344',NULL,'72671f02-ca36-4d64-bdf0-759a87032253','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Alia','alia@dsss.com'),
+	(NULL,NULL,'contact',NULL,NULL,'zaki','online','2023-11-10 20:21:02.742315','2023-11-10 21:19:10.000000','2023-11-10 21:19:10.000000','748ff9e1-1051-4994-9ace-057d518d88a0','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Zaki','zaki@agenlaku.com'),
+	(NULL,NULL,'contact',NULL,NULL,'joko','online','2023-11-10 07:55:07.881556','2023-11-10 07:55:07.881556',NULL,'7e206215-d5c2-4c84-aa9d-c0065a0a8796','de4e31bd-393d-40f7-86ae-ce8e25d81b00','joko','joasa@ad.com'),
+	(NULL,NULL,'contact',NULL,NULL,'aa','online','2023-11-10 07:53:31.811162','2023-11-10 20:25:09.000000','2023-11-10 20:25:09.000000','7fc0e99d-c00a-4626-af16-19466ba8d81a','de4e31bd-393d-40f7-86ae-ce8e25d81b00','aa','basa@sds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'john','online','2023-11-08 19:37:53.346382','2023-11-10 21:15:17.000000','2023-11-10 21:15:17.000000','86e3f5de-9e18-45d4-8a25-897d475346ac','de4e31bd-393d-40f7-86ae-ce8e25d81b00','John','sd@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bangga','online','2023-11-09 19:54:57.666530','2023-11-09 19:54:57.666530',NULL,'88efa371-41b9-4cb0-bc09-2a303d5f9c56','de4e31bd-393d-40f7-86ae-ce8e25d81b00','bangga','aasa@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'ass','online','2023-11-10 06:51:48.125337','2023-11-10 20:26:45.000000','2023-11-10 20:26:45.000000','8d7ab8e1-c906-40ae-941d-d45eb0e6911b','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Ass','aad@ds.com'),
+	('Lorem Ipsum is simply dummy text.','Kebayoran Lama, Jakarta Selatan','contact','[{\"image\":\"http://s3.amazonaws.com/redqteam.com/pickbazar/banana.jpg\"}]','http://s3.amazonaws.com/redqteam.com/pickbazar/banana.jpg','lenon','online','2023-08-30 06:16:51.507261','2023-11-10 21:15:14.000000','2023-11-10 21:15:14.000000','8db0a347-c8a8-4954-a5f5-5f4f21bc1382','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Lenon','aa@dsds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'akila','online','2023-11-10 06:54:31.984271','2023-11-10 20:26:14.000000','2023-11-10 20:26:14.000000','92d041b9-a649-4b33-b1ba-506830ca5ade','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Akila','ak@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'maju','online','2023-11-08 19:23:39.432151','2023-11-10 21:15:10.000000','2023-11-10 21:15:10.000000','93442465-5f40-499f-8b41-75bce7574af1','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Maju','maju@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'hadir','online','2023-11-10 06:50:40.418664','2023-11-10 20:27:45.000000','2023-11-10 20:27:45.000000','9752eaa8-2502-4d47-a6ec-561d2321dc2f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','hadir','aad@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bagus','online','2023-11-10 19:44:12.718355','2023-11-10 19:44:12.718355',NULL,'9bcc76ac-782a-4c4c-b19d-17f4e9229ec7','de4e31bd-393d-40f7-86ae-ce8e25d81b00','bagus','bagus@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'aaa','online','2023-11-08 19:41:07.459847','2023-11-09 09:25:15.000000','2023-11-09 09:25:15.000000','9f25eabd-8f32-412d-85c8-e3ef21072838','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Jos','joas@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'angan','online','2023-11-08 19:55:33.392091','2023-11-09 05:50:26.927857',NULL,'a0a8f481-2c01-4d28-8279-70aa97890b0f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Angan','kn@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'jual','online','2023-11-10 06:55:46.577797','2023-11-10 09:07:32.000000','2023-11-10 09:07:32.000000','a51eb010-368b-45c2-a9c3-68c02ef8de11','de4e31bd-393d-40f7-86ae-ce8e25d81b00','jual','jual@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'sumba','online','2023-11-10 08:09:08.222586','2023-11-10 13:02:13.000000','2023-11-10 13:02:13.000000','a82c0563-e417-4a57-9830-7f70377b1aca','de4e31bd-393d-40f7-86ae-ce8e25d81b00','sumba','sumba@dsa.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bagus-namannya','online','2023-11-10 21:20:31.354138','2023-11-10 21:36:46.000000','2023-11-10 21:36:46.000000','a8674c46-c9b4-4c50-9a5e-46baff287f5f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Bagus Namannya','bagus@email.com'),
+	(NULL,NULL,'contact',NULL,NULL,'lati','online','2023-11-09 20:15:56.277736','2023-11-10 21:13:39.000000','2023-11-10 21:13:39.000000','aefb7ba3-00e7-4491-99f7-940ddfa48d0d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Lati','lati@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'bkl','online','2023-11-10 06:53:28.729238','2023-11-10 20:26:40.000000','2023-11-10 20:26:40.000000','afca99d3-bb63-4194-bac9-2091beb0c68c','de4e31bd-393d-40f7-86ae-ce8e25d81b00','bkl','bla@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'halo','online','2023-11-10 06:45:01.709220','2023-11-10 20:30:21.000000','2023-11-10 20:30:21.000000','b169c000-b6ad-4788-9f22-ccdcf3008bf6','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Halo','aasa@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'juragan','online','2023-11-10 21:28:00.388596','2023-11-10 21:37:27.000000',NULL,'b793f460-2826-422b-a7a3-d6e8ff511c95','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Juragan','jura@gan.com'),
+	(NULL,NULL,'contact',NULL,NULL,'udin','online','2023-11-10 21:35:23.549969','2023-11-10 21:35:23.549969',NULL,'beefb84e-171e-4b8f-99d3-0d61b3e076c7','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Udin','udin@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'wawasan','online','2023-11-10 07:57:24.842845','2023-11-10 20:25:05.000000','2023-11-10 20:25:05.000000','c214e8df-264c-486e-9694-6e837fd751b5','de4e31bd-393d-40f7-86ae-ce8e25d81b00','wawasan','baska@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'aada','online','2023-11-09 19:54:38.376059','2023-11-09 20:02:00.000000','2023-11-09 20:02:00.000000','c67640da-0e00-4cce-97bd-be67fc2e05bc','de4e31bd-393d-40f7-86ae-ce8e25d81b00','aada','sdsd@sds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'joshua','online','2023-11-10 19:43:08.975541','2023-11-10 19:49:32.000000',NULL,'da41ed22-10f0-47ec-acf7-68736985e85c','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Joshua','joshua@mail.com'),
+	(NULL,NULL,'contact',NULL,NULL,'nama-baru','online','2023-11-10 20:09:58.146151','2023-11-10 20:20:19.000000','2023-11-10 20:20:19.000000','e5ae28ab-de6f-480e-b7a0-6b7b94967d14','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Nama Baru','nama@baru.com'),
+	('Lorem Ipsum is simply dummy text.','Kebayoran Lama, Jakarta Selatan','contact','[{\"image\":\"http://s3.amazonaws.com/redqteam.com/pickbazar/banana.jpg\"}]','http://s3.amazonaws.com/redqteam.com/pickbazar/banana.jpg','ada','online','2023-08-30 06:16:51.507261','2023-11-09 20:01:23.000000','2023-11-09 20:01:23.000000','ef920390-a82e-4f20-9e4f-b1ad3baca9ca','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Ada','sd@dsaa.com'),
+	(NULL,NULL,'contact',NULL,NULL,'test','online','2023-11-10 19:47:54.749811','2023-11-10 20:01:55.000000','2023-11-10 20:01:55.000000','f0031842-ef2e-4492-a138-a62bd66815ea','de4e31bd-393d-40f7-86ae-ce8e25d81b00','test','test@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'yuow','online','2023-11-10 14:13:15.190096','2023-11-10 20:07:48.000000','2023-11-10 20:07:48.000000','f76c8fd7-9441-43a7-834e-a0e4402a6339','de4e31bd-393d-40f7-86ae-ce8e25d81b00','yuow','ada@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'basti','online','2023-11-09 20:00:53.008420','2023-11-10 21:14:13.000000','2023-11-10 21:14:13.000000','f9d1f1d9-6843-492d-b48d-c72e0239c778','de4e31bd-393d-40f7-86ae-ce8e25d81b00','Basti','bas@ds.com'),
+	(NULL,NULL,'contact',NULL,NULL,'loal','online','2023-11-10 06:56:56.459410','2023-11-10 20:25:54.000000','2023-11-10 20:25:54.000000','ffa04d57-b712-49d4-984b-09f5ec556c3c','de4e31bd-393d-40f7-86ae-ce8e25d81b00','loal','loa@s.com');
+
+/*!40000 ALTER TABLE `book` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table book_category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `book_category`;
+
+CREATE TABLE `book_category` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uuid` char(100) DEFAULT NULL,
+  `userUuid` char(100) DEFAULT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `bookUuid` char(100) DEFAULT NULL,
+  `categoryUuid` char(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_883f49d8c506800bd65119a7395` (`bookUuid`),
+  KEY `FK_677592abd6d42c6090815078713` (`categoryUuid`),
+  CONSTRAINT `FK_677592abd6d42c6090815078713` FOREIGN KEY (`categoryUuid`) REFERENCES `category` (`uuid`),
+  CONSTRAINT `FK_883f49d8c506800bd65119a7395` FOREIGN KEY (`bookUuid`) REFERENCES `book` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `book_category` WRITE;
+/*!40000 ALTER TABLE `book_category` DISABLE KEYS */;
+
+INSERT INTO `book_category` (`id`, `uuid`, `userUuid`, `createdDate`, `updateDate`, `deletedDate`, `bookUuid`, `categoryUuid`)
+VALUES
+	(1,'9b74e6b8-32d2-4ffd-a0fc-eb55b8996ac7','de4e31bd-393d-40f7-86ae-ce8e25d81b00','2023-11-06 20:24:51.004478','2023-11-06 20:25:31.054633',NULL,'8db0a347-c8a8-4954-a5f5-5f4f21bc1382','179d6914-fdca-4364-a7a8-f9d16bd3cea5'),
+	(2,'8a74e6b8-32d2-4ffd-a0fc-eb55b8996cc8','de4e31bd-393d-40f7-86ae-ce8e25d81b00','2023-11-06 20:25:38.479836','2023-11-06 20:26:23.171683',NULL,'ef920390-a82e-4f20-9e4f-b1ad3baca9ca','2cafa395-e245-4778-8c7e-5ba54080c939');
+
+/*!40000 ALTER TABLE `book_category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table book_collection
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `book_collection`;
+
+CREATE TABLE `book_collection` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uuid` char(100) DEFAULT NULL,
+  `userUuid` char(100) DEFAULT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `bookUuid` char(100) DEFAULT NULL,
+  `collectionUuid` char(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `IDX_e7207927741782080b2951790b` (`uuid`),
+  KEY `FK_e9abba18fe4c080787d1273161e` (`bookUuid`),
+  KEY `FK_05d48fd7830affec653e4ce9d41` (`collectionUuid`),
+  CONSTRAINT `FK_05d48fd7830affec653e4ce9d41` FOREIGN KEY (`collectionUuid`) REFERENCES `collection` (`uuid`),
+  CONSTRAINT `FK_e9abba18fe4c080787d1273161e` FOREIGN KEY (`bookUuid`) REFERENCES `book` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `book_collection` WRITE;
+/*!40000 ALTER TABLE `book_collection` DISABLE KEYS */;
+
+INSERT INTO `book_collection` (`id`, `uuid`, `userUuid`, `createdDate`, `updateDate`, `deletedDate`, `bookUuid`, `collectionUuid`)
+VALUES
+	(1,'2aafbdaa-7818-48ce-a417-1cebdb75abf6','1091357a-3269-11ee-be56-0242ac120002','2023-11-09 20:07:14.787193','2023-11-09 20:07:14.787193',NULL,'674ae4ce-ec37-43dc-a204-3250f6fee671','dd514332-81cb-4528-8a08-192774c62586'),
+	(2,'3097bef9-92a2-4008-b9df-3885b169aa7a','1091357a-3269-11ee-be56-0242ac120002','2023-11-09 20:13:16.634660','2023-11-09 20:13:16.634660',NULL,'f9d1f1d9-6843-492d-b48d-c72e0239c778','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(3,'04fe424a-3746-40bd-b54f-a9e5dd7eabfb','1091357a-3269-11ee-be56-0242ac120002','2023-11-09 20:14:15.385408','2023-11-09 20:14:15.385408',NULL,'88efa371-41b9-4cb0-bc09-2a303d5f9c56','dd514332-81cb-4528-8a08-192774c62586'),
+	(4,'238833f6-e6fb-4702-b34f-04f3346ac285','1091357a-3269-11ee-be56-0242ac120002','2023-11-09 20:14:31.732042','2023-11-09 20:14:31.732042',NULL,'a0a8f481-2c01-4d28-8279-70aa97890b0f','dd514332-81cb-4528-8a08-192774c62586'),
+	(5,'124190be-72fb-4bc7-a7eb-98f35dfed74c','1091357a-3269-11ee-be56-0242ac120002','2023-11-09 20:14:31.752290','2023-11-09 20:14:31.752290',NULL,'1e156023-ed55-4965-9f11-832b3d0156da','dd514332-81cb-4528-8a08-192774c62586'),
+	(6,'29483863-e59a-4105-b67f-dfdb5e92b3ff','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 18:44:56.408608','2023-11-10 18:44:56.408608',NULL,'f76c8fd7-9441-43a7-834e-a0e4402a6339','dd514332-81cb-4528-8a08-192774c62586'),
+	(7,'53deb269-0ef6-4ae1-9b7a-ed0ed9cb4444','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 18:44:56.414803','2023-11-10 18:44:56.414803',NULL,'6b11e62d-fc37-4ea0-8f59-3318b509ab4f','dd514332-81cb-4528-8a08-192774c62586'),
+	(8,'d5d552e2-07bf-4316-bc72-c10727ec831f','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 18:54:37.515560','2023-11-10 18:54:37.515560',NULL,'f76c8fd7-9441-43a7-834e-a0e4402a6339','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(9,'93a8d4f6-e793-459f-b463-908351ed15ce','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 18:55:18.453101','2023-11-10 18:55:18.453101',NULL,'619e3c17-39d2-444f-866b-f7e0c0f74e98','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(10,'bec52715-04f5-4ca5-9a45-4b6268326918','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:37:54.914719','2023-11-10 19:37:54.914719',NULL,'c214e8df-264c-486e-9694-6e837fd751b5','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(11,'a1d53219-dc50-40de-9b08-8cccb9bf0c4c','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:37:54.928252','2023-11-10 19:37:54.928252',NULL,'c214e8df-264c-486e-9694-6e837fd751b5','dd514332-81cb-4528-8a08-192774c62586'),
+	(12,'e4906328-1869-4941-b4b3-985eca323aca','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:37:54.938214','2023-11-10 19:37:54.938214',NULL,'7e206215-d5c2-4c84-aa9d-c0065a0a8796','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(13,'50063782-1cd9-49ec-a650-cfa58907558d','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:37:54.946043','2023-11-10 19:37:54.946043',NULL,'7e206215-d5c2-4c84-aa9d-c0065a0a8796','dd514332-81cb-4528-8a08-192774c62586'),
+	(14,'a1018c09-cbdd-452e-bcfb-92d6bc4b3e9f','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:42:56.175621','2023-11-10 19:42:56.175621',NULL,'545bc4a2-916c-48fc-ab46-3dd10f024294','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(15,'18cbf07e-0c8b-4110-b821-ff2cce7ec829','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:42:56.189326','2023-11-10 19:42:56.189326',NULL,'545bc4a2-916c-48fc-ab46-3dd10f024294','dd514332-81cb-4528-8a08-192774c62586'),
+	(16,'c1d9f3f2-fdd4-42fb-a8d3-a99fe24107d5','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:42:56.196967','2023-11-10 19:42:56.196967',NULL,'1cdf9218-dab5-4346-8f9c-d8d86677b1f0','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(17,'40e5ffc5-48cd-45e9-a70d-30640fca37ec','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:42:56.208659','2023-11-10 19:42:56.208659',NULL,'1cdf9218-dab5-4346-8f9c-d8d86677b1f0','dd514332-81cb-4528-8a08-192774c62586'),
+	(18,'46ffe66a-4cad-4f74-920c-ef1c8c6b2ed0','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:43:55.189697','2023-11-10 19:43:55.189697',NULL,'da41ed22-10f0-47ec-acf7-68736985e85c','dd514332-81cb-4528-8a08-192774c62586'),
+	(19,'a20c40b2-28c5-45ae-a213-a20ff2c6c7d7','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 19:43:55.194398','2023-11-10 19:43:55.194398',NULL,'da41ed22-10f0-47ec-acf7-68736985e85c','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(20,'5ada0a2f-f8c6-493d-bfb1-2864f37f53d4','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.644762','2023-11-10 20:01:41.644762',NULL,'5a3e0c95-e55d-4643-8309-9b4965f6520b','dd514332-81cb-4528-8a08-192774c62586'),
+	(21,'fe811432-49cc-432d-aaaf-12aec9275b59','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.649708','2023-11-10 20:01:41.649708',NULL,'5a3e0c95-e55d-4643-8309-9b4965f6520b','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(22,'190e97b7-61f4-4cf0-be38-a4cc9ea0df42','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.654266','2023-11-10 20:01:41.654266',NULL,'f0031842-ef2e-4492-a138-a62bd66815ea','dd514332-81cb-4528-8a08-192774c62586'),
+	(23,'0904f951-c4b7-4aab-90de-0fce01e3891a','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.662130','2023-11-10 20:01:41.662130',NULL,'f0031842-ef2e-4492-a138-a62bd66815ea','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(24,'06cc995b-936b-4b84-aa89-842b85595b2b','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.667066','2023-11-10 20:01:41.667066',NULL,'9bcc76ac-782a-4c4c-b19d-17f4e9229ec7','dd514332-81cb-4528-8a08-192774c62586'),
+	(25,'3b8d441b-78a3-46d7-aa63-85c0a80ee7e4','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:01:41.670749','2023-11-10 20:01:41.670749',NULL,'9bcc76ac-782a-4c4c-b19d-17f4e9229ec7','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(26,'c1f5e0ae-c349-44af-b0da-c285428faa71','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:08:49.538941','2023-11-10 20:08:49.538941',NULL,'3310a555-a60b-45a4-958c-dba3a6f2319a','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(27,'f1cee0da-10f6-452a-a808-7e2a9860664d','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:08:49.543340','2023-11-10 20:08:49.543340',NULL,'72671f02-ca36-4d64-bdf0-759a87032253','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(28,'efb69460-9a42-4686-bfc0-b59dddd39c0d','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 20:09:40.111313','2023-11-10 20:09:40.111313',NULL,'3310a555-a60b-45a4-958c-dba3a6f2319a','dd514332-81cb-4528-8a08-192774c62586'),
+	(29,'7430990b-1463-4cea-bedc-5eb882200ce7','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:16:15.456882','2023-11-10 21:16:15.456882',NULL,'6471fb3e-dbc1-41ef-8c01-fe5637b12691','dd514332-81cb-4528-8a08-192774c62586'),
+	(30,'5b71f249-3d9d-4af5-a0f6-b33cba744db5','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:16:15.467587','2023-11-10 21:16:15.467587',NULL,'6471fb3e-dbc1-41ef-8c01-fe5637b12691','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(31,'fbc5f1a7-0fe8-4b01-b4c7-b54f18ba669f','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:16:15.472666','2023-11-10 21:16:15.472666',NULL,'748ff9e1-1051-4994-9ace-057d518d88a0','dd514332-81cb-4528-8a08-192774c62586'),
+	(32,'a6d352ba-498f-4a6e-a2dc-56a038c058ab','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:16:15.477539','2023-11-10 21:16:15.477539',NULL,'748ff9e1-1051-4994-9ace-057d518d88a0','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(33,'625408d2-da57-4715-a36d-eb10619722bd','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:20:09.399966','2023-11-10 21:20:09.399966',NULL,'41c7c166-1c19-4abe-966f-296446664b7f','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(34,'f12db002-cb4f-417b-bb2a-417395e22591','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:20:09.404734','2023-11-10 21:20:09.404734',NULL,'41c7c166-1c19-4abe-966f-296446664b7f','dd514332-81cb-4528-8a08-192774c62586'),
+	(35,'601da44e-d5db-4b78-914a-fe1fd680b1f9','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:20:51.487245','2023-11-10 21:20:51.487245',NULL,'a8674c46-c9b4-4c50-9a5e-46baff287f5f','dd514332-81cb-4528-8a08-192774c62586'),
+	(36,'9dabaf3b-9cd7-4bb9-bce1-b37a3a5f81d6','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:20:51.504958','2023-11-10 21:20:51.504958',NULL,'a8674c46-c9b4-4c50-9a5e-46baff287f5f','7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	(37,'645c253c-6b87-494a-8559-0c2867077c37','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:38:41.366020','2023-11-10 21:38:41.366020',NULL,'0c5e03cc-5287-4c0b-8b43-996f30990522','dd514332-81cb-4528-8a08-192774c62586'),
+	(38,'635f6df0-431b-4c85-952d-d9eec182c732','1091357a-3269-11ee-be56-0242ac120002','2023-11-10 21:39:38.942668','2023-11-10 21:39:38.942668',NULL,'5b82eb81-a8cb-4761-ac86-d482fb696942','dd514332-81cb-4528-8a08-192774c62586');
+
+/*!40000 ALTER TABLE `book_collection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `category`;
+
+CREATE TABLE `category` (
+  `name` char(50) NOT NULL,
+  `icon` char(100) DEFAULT NULL,
+  `slug` char(60) NOT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `uuid` varchar(100) NOT NULL,
+  PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+
+INSERT INTO `category` (`name`, `icon`, `slug`, `createdDate`, `updateDate`, `deletedDate`, `uuid`)
+VALUES
+	('People','people','people','2023-08-24 16:47:29.288869','2023-11-06 20:13:24.196649',NULL,'179d6914-fdca-4364-a7a8-f9d16bd3cea5'),
+	('Office','office','office','2023-08-24 16:48:05.143213','2023-11-06 20:26:42.391094',NULL,'2cafa395-e245-4778-8c7e-5ba54080c939');
+
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table collection
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `collection`;
+
+CREATE TABLE `collection` (
+  `name` char(50) NOT NULL,
+  `type` char(60) NOT NULL DEFAULT 'tv',
+  `image` varchar(255) DEFAULT NULL,
+  `slug` char(60) NOT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `uuid` varchar(100) NOT NULL,
+  PRIMARY KEY (`uuid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `collection` WRITE;
+/*!40000 ALTER TABLE `collection` DISABLE KEYS */;
+
+INSERT INTO `collection` (`name`, `type`, `image`, `slug`, `createdDate`, `updateDate`, `deletedDate`, `uuid`)
+VALUES
+	('Family','contact','http://s3.amazonaws.com/redqteam.com/pickbazar/banana_thumb.png','family','2023-08-24 16:49:05.628610','2023-11-08 18:17:21.820566',NULL,'7fb5d505-5021-4a97-9a85-e204c2f5ba8c'),
+	('Friend','contact','http://s3.amazonaws.com/redqteam.com/pickbazar/banana_thumb.png','friend','2023-08-24 16:49:49.484248','2023-11-08 18:18:01.161198',NULL,'dd514332-81cb-4528-8a08-192774c62586');
+
+/*!40000 ALTER TABLE `collection` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table phone_number
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `phone_number`;
+
+CREATE TABLE `phone_number` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uuid` char(100) DEFAULT NULL,
+  `userUuid` char(100) DEFAULT NULL,
+  `phoneNumber` char(100) DEFAULT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  `bookUuid` char(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `IDX_c53f7553cd27fbd1ee86ea664e` (`uuid`),
+  KEY `FK_7aa12d466737d9dfdeb83474222` (`bookUuid`),
+  CONSTRAINT `FK_7aa12d466737d9dfdeb83474222` FOREIGN KEY (`bookUuid`) REFERENCES `book` (`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `phone_number` WRITE;
+/*!40000 ALTER TABLE `phone_number` DISABLE KEYS */;
+
+INSERT INTO `phone_number` (`id`, `uuid`, `userUuid`, `phoneNumber`, `createdDate`, `updateDate`, `deletedDate`, `bookUuid`)
+VALUES
+	(1,'5e83a731-fb39-4a8c-b81e-e9526cb5f0b3','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823234231','2023-11-10 07:57:24.866889','2023-11-10 07:57:24.866889',NULL,'c214e8df-264c-486e-9694-6e837fd751b5'),
+	(2,'bee23de0-52a9-4ffc-82e0-e2206652eae7','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0824323211','2023-11-10 07:59:04.818572','2023-11-10 07:59:04.818572',NULL,'619e3c17-39d2-444f-866b-f7e0c0f74e98'),
+	(3,'bb73046f-162c-44f5-b2f4-d12859daa13d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823423421','2023-11-10 08:09:08.262627','2023-11-10 08:57:38.000000',NULL,'a82c0563-e417-4a57-9830-7f70377b1aca'),
+	(4,'5a404353-ff9d-40de-8030-b7e129dee575','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082342111','2023-11-10 09:05:32.162081','2023-11-10 19:38:05.000000',NULL,'7e206215-d5c2-4c84-aa9d-c0065a0a8796'),
+	(5,'72d5b1a5-e42a-40f8-b4dc-45cbee5c5fb3','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823423333','2023-11-10 09:06:00.553194','2023-11-10 19:38:13.000000',NULL,'7fc0e99d-c00a-4626-af16-19466ba8d81a'),
+	(6,'857bfb1e-9164-4ce9-b653-acac5f22dc3c','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082171111','2023-11-10 09:06:00.563195','2023-11-10 09:06:00.563195',NULL,'7fc0e99d-c00a-4626-af16-19466ba8d81a'),
+	(7,'5a49bad8-6534-470e-b9fb-bbab81177ee8','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823423333','2023-11-10 13:44:05.567248','2023-11-10 20:07:57.000000',NULL,'6b11e62d-fc37-4ea0-8f59-3318b509ab4f'),
+	(8,'a82702bf-3723-47e0-a4e2-293b64f46a4d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','083423423113','2023-11-10 14:13:15.203396','2023-11-10 14:39:28.000000',NULL,'f76c8fd7-9441-43a7-834e-a0e4402a6339'),
+	(9,'53c03021-2e86-4eef-833e-a342d397b2d1','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082342323423','2023-11-10 18:25:57.473837','2023-11-10 18:25:57.473837',NULL,'f76c8fd7-9441-43a7-834e-a0e4402a6339'),
+	(10,'c5cfcf83-e6b3-4762-9fb8-fefb340b6bef','de4e31bd-393d-40f7-86ae-ce8e25d81b00','08234234233','2023-11-10 19:38:29.469969','2023-11-10 20:02:03.000000',NULL,'545bc4a2-916c-48fc-ab46-3dd10f024294'),
+	(11,'ae8bb4e1-8d15-4788-9a80-80e06cb1b9d5','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082342342333','2023-11-10 19:43:08.983994','2023-11-10 19:43:34.000000',NULL,'da41ed22-10f0-47ec-acf7-68736985e85c'),
+	(12,'aae50a13-c53d-47fd-b700-839161fc2066','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823424111','2023-11-10 19:44:12.739860','2023-11-10 19:44:12.739860',NULL,'9bcc76ac-782a-4c4c-b19d-17f4e9229ec7'),
+	(13,'0b214db5-238c-4fa5-a7f8-8070d0d10e67','de4e31bd-393d-40f7-86ae-ce8e25d81b00','083422311','2023-11-10 19:47:11.929241','2023-11-10 19:47:11.929241',NULL,'0eadb730-aa7e-4547-8c54-f404589b22d4'),
+	(14,'0ed47ee4-5bde-40e5-b3dd-b4eb95b5cc8d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','083242232433','2023-11-10 19:47:54.756827','2023-11-10 19:49:25.000000',NULL,'f0031842-ef2e-4492-a138-a62bd66815ea'),
+	(15,'58fbf037-2569-4627-adcf-c289eeb50050','de4e31bd-393d-40f7-86ae-ce8e25d81b00','083897263653','2023-11-10 20:01:11.970471','2023-11-10 20:01:30.000000',NULL,'5a3e0c95-e55d-4643-8309-9b4965f6520b'),
+	(16,'1a6a3ebe-1832-4ab5-80f6-cac54a730a05','de4e31bd-393d-40f7-86ae-ce8e25d81b00','08422342311','2023-11-10 20:07:42.520350','2023-11-10 20:07:42.520350',NULL,'72671f02-ca36-4d64-bdf0-759a87032253'),
+	(17,'1e7cde98-b55d-44d2-8adc-47675df02fe2','de4e31bd-393d-40f7-86ae-ce8e25d81b00','083897263653','2023-11-10 20:08:31.811314','2023-11-10 21:19:48.000000',NULL,'3310a555-a60b-45a4-958c-dba3a6f2319a'),
+	(18,'7a11f055-f5cc-482f-852e-02e6c017c76f','de4e31bd-393d-40f7-86ae-ce8e25d81b00','08234234111','2023-11-10 20:09:58.152101','2023-11-10 20:09:58.152101',NULL,'e5ae28ab-de6f-480e-b7a0-6b7b94967d14'),
+	(19,'c3f0febc-8049-43e0-a611-50654be8bec8','de4e31bd-393d-40f7-86ae-ce8e25d81b00','08234234222','2023-11-10 20:21:02.750706','2023-11-10 21:16:38.000000',NULL,'748ff9e1-1051-4994-9ace-057d518d88a0'),
+	(20,'24e87a1e-decc-4ff1-9b6e-d587027c4034','de4e31bd-393d-40f7-86ae-ce8e25d81b00','08234234244','2023-11-10 20:21:14.108992','2023-11-10 21:16:38.000000',NULL,'748ff9e1-1051-4994-9ace-057d518d88a0'),
+	(21,'a0ca54f8-bbe3-4f2e-a438-c529f3f7c277','de4e31bd-393d-40f7-86ae-ce8e25d81b00','088234232431','2023-11-10 21:16:04.078948','2023-11-10 21:16:04.078948',NULL,'6471fb3e-dbc1-41ef-8c01-fe5637b12691'),
+	(22,'e4f3f552-059f-4a0d-a169-f7f9f79d3bb4','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082342342311','2023-11-10 21:16:30.483446','2023-11-10 21:16:30.483446',NULL,'6471fb3e-dbc1-41ef-8c01-fe5637b12691'),
+	(23,'48645da4-65e2-4f09-abc4-6eea8024e693','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082322111','2023-11-10 21:17:18.962225','2023-11-10 21:17:18.962225',NULL,'01f248a2-5c02-4cb8-abb4-f2982544902d'),
+	(24,'ae717cc1-4ae9-48d5-9ee6-537c4889c096','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0855234311','2023-11-10 21:17:18.985463','2023-11-10 21:17:18.985463',NULL,'01f248a2-5c02-4cb8-abb4-f2982544902d'),
+	(25,'7be95328-1d93-4aab-b755-dd32089f9042','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0872218181811','2023-11-10 21:19:57.985092','2023-11-10 21:19:57.985092',NULL,'3310a555-a60b-45a4-958c-dba3a6f2319a'),
+	(26,'f78dc022-907c-4f72-b4b7-bcf331a7b030','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0832423424311','2023-11-10 21:20:31.362830','2023-11-10 21:20:31.362830',NULL,'a8674c46-c9b4-4c50-9a5e-46baff287f5f'),
+	(27,'da0a3c31-2cd1-4c4f-adb8-a719bf7dc97c','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823432433434','2023-11-10 21:20:41.693878','2023-11-10 21:20:41.693878',NULL,'a8674c46-c9b4-4c50-9a5e-46baff287f5f'),
+	(28,'bc886781-b4cf-4ea2-b981-78876465c733','de4e31bd-393d-40f7-86ae-ce8e25d81b00','082342341','2023-11-10 21:28:00.406576','2023-11-10 21:28:00.406576',NULL,'b793f460-2826-422b-a7a3-d6e8ff511c95'),
+	(29,'f4797808-f4b6-487d-8a9c-3e8b0d6efe51','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0832423222','2023-11-10 21:35:23.566157','2023-11-10 21:37:17.000000',NULL,'beefb84e-171e-4b8f-99d3-0d61b3e076c7'),
+	(30,'9fe260cd-a5b1-468d-a41e-3f253a74f7fd','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0828343421','2023-11-10 21:37:17.778105','2023-11-10 21:37:17.778105',NULL,'beefb84e-171e-4b8f-99d3-0d61b3e076c7'),
+	(31,'6a5ce9a0-9a5b-49ce-b7d1-d5b5640e4e78','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823432322','2023-11-10 21:38:14.620735','2023-11-10 21:38:36.000000',NULL,'0c5e03cc-5287-4c0b-8b43-996f30990522'),
+	(32,'c7e7ab68-dc54-4bed-9f7f-0a9d350b4d48','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823424344','2023-11-10 21:38:14.632278','2023-11-10 21:38:36.000000',NULL,'0c5e03cc-5287-4c0b-8b43-996f30990522'),
+	(33,'d1472c5b-cdce-4486-8d7d-10bfaa06e606','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0823424311','2023-11-10 21:38:57.553283','2023-11-10 21:38:57.553283',NULL,'5b82eb81-a8cb-4761-ac86-d482fb696942'),
+	(34,'47566ad7-5438-41a7-a0e2-1620e7bd268d','de4e31bd-393d-40f7-86ae-ce8e25d81b00','0842421133','2023-11-10 21:39:07.577807','2023-11-10 21:39:07.577807',NULL,'5b82eb81-a8cb-4761-ac86-d482fb696942');
+
+/*!40000 ALTER TABLE `phone_number` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Dump of table user
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `uuid` varchar(100) DEFAULT NULL,
+  `password` char(120) NOT NULL,
+  `firstName` char(30) NOT NULL,
+  `lastName` char(30) DEFAULT NULL,
+  `userName` char(70) NOT NULL,
+  `birthdayDate` char(20) DEFAULT NULL,
+  `createdDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updateDate` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  `deletedDate` datetime(6) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+
+INSERT INTO `user` (`id`, `uuid`, `password`, `firstName`, `lastName`, `userName`, `birthdayDate`, `createdDate`, `updateDate`, `deletedDate`)
+VALUES
+	(1,'de4e31bd-393d-40f7-86ae-ce8e25d81b00','Password8','Bayu','Syaits','bayuSyaits','1993-04-24','2023-08-24 15:59:29.077228','2023-08-24 15:59:29.077228',NULL);
+
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
