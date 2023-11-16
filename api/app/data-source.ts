@@ -7,14 +7,15 @@ import { Collection } from "./services/collection/entity"
 import { BookCollection } from "./services/book-collection/entity"
 import { PhoneNumber } from "./services/phone-number/entity"
 import { BookCategory } from "./services/book-category/entity"
+require('dotenv').config()
 
 export const AppDataSource = new DataSource({
     type: "mysql",
-    host: "127.0.0.1",
-    port: 3306,
-    username: "root",
-    password: "Password8",
-    database: "db_phone_book",
+    host: process.env.MYSQLDB_HOST || '127.0.0.1',
+    port: Number(process.env.MYSQLDB_LOCAL_PORT) || 3306,
+    username: process.env.MYSQLDB_USER || 'root',
+    password: process.env.MYSQLDB_ROOT_PASSWORD,
+    database: process.env.MYSQLDB_DATABASE || 'db_phone_book',
     synchronize: true,
     logging: false,
     entities: [

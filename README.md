@@ -52,8 +52,8 @@ $ docker run -d -p 3003:3003 nextjs/contact-collection:1.0.0
 ## 2 Running SQL
 
 ```bash
-# open folder app
-$ cd db_phone_book
+# open folder db
+$ cd db
 
 # copy query
 # run & paste query in sequel ace

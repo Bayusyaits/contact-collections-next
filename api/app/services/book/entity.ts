@@ -79,7 +79,7 @@ export class Book extends BaseEntity {
   @Column("char", {nullable: true, length: 100})
   userUuid: string;
 
-  @Column({ type: "simple-json", default: "", nullable: true })
+  @Column({ type: "simple-json", nullable: true })
   gallery: Gallery[];
   
   @Column({default: null, nullable: true})

@@ -49,7 +49,7 @@ const BookListContainer: React.FC<BookProps> = ({
     data: dataCollections 
   } = useQuery(GET_LIST_COLLECTIONS, {
     variables: {
-      createdDate: 'uuid',
+      orderBy: 'createdDate',
       slug: ''
     },
   }) 

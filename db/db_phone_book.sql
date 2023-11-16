@@ -29,7 +29,7 @@ CREATE TABLE `book` (
   `description` text,
   `address` text,
   `type` char(20) DEFAULT NULL,
-  `gallery` text,
+  `gallery` text DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
   `slug` char(60) NOT NULL,
   `status` enum('offline','online') NOT NULL DEFAULT 'online',

@@ -8,7 +8,8 @@ do
   echo "Processing replace gateway url $file ...";
 
   sed -i 's|"ENV_REACT_APP_API_URL"|"'${ENV_REACT_APP_API_URL}'"|g' $file
-  sed -i 's|"ENV_REACT_USER_UUID"|"'${ENV_REACT_USER_UUID}'"|g' $file
+  sed -i 's|"ENV_REACT_CHANNEL"|"'${ENV_REACT_CHANNEL}'"|g' $file
+  sed -i 's|"ENV_REACT_APP_BASENAME"|"'${ENV_REACT_APP_BASENAME}'"|g' $file
 
 done
 
