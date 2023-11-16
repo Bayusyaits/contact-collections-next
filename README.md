@@ -17,6 +17,14 @@ ref: bayusyaits.medium.com
 $ git commit -m "chore: update npm dependency to the latest"
 ```
 
+## Running Apps
+
+```bash
+# run docker compose
+$ docker-compose up -d
+
+```
+
 ## 1 Build Setup App
 
 ```bash
