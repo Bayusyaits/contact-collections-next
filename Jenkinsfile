@@ -1,16 +1,27 @@
 pipeline {
-    agent any
+    agent {
+        label 'master'
+    }
     stages {
-        stage('env') {
+        stage('load env') {
             steps {
                 echo " =========== ^^^^^^^^^^^^ Load ENV "
             }
         }
-        stage('build') {
+        stage('prepare') {
             steps {
-                echo " =========== ^^^^^^^^^^^^ Build "
+                echo " =========== ^^^^^^^^^^^^ Prepare "
             }
         }
-        
+        stage('push') {
+            steps {
+                echo " =========== ^^^^^^^^^^^^ Push "
+            }
+        }
+        stage('deploy') {
+            steps {
+                echo " =========== ^^^^^^^^^^^^ Deploy "
+            }
+        }
     }
 }
