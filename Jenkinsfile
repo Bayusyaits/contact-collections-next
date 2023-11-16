@@ -18,10 +18,6 @@ pipeline {
     stage('build') {
         steps {
             echo " =========== ^^^^^^^^^^^^ Build "
-            sh "sed -i \'s:latest:${tag_ver}:\' docker-compose.yaml"
-            sh "sed -i \'s:latest:${tag_ver}:\' .env"
-            sh "docker-compose -f docker-compose.yaml build"
-            sh "docker images"
         }
     }
     stage('cluster prepare') {
