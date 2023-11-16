@@ -2,12 +2,6 @@
 
 pipeline {
   agent any
-  environment {
-    tag_ver = sh (
-      script: "git describe --tags",
-      returnStdout: true
-      ).trim()
-  }
   stages {
     stage('load env') {
         steps {
