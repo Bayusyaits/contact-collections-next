@@ -50,9 +50,12 @@ $ yarn format
 
 ## docker
 # build
-$ docker build -t nextjs/contact-collection:1.0.0 .
+$ docker build -t contact-collection:1.0.0 .
 # run
-$ docker run -d -p 3003:3003 nextjs/contact-collection:1.0.0
+$ docker run -d -p 3003:3003 contact-collection:1.0.0
+
+$ docker tag contact-collection:1.0.0 {username}/contact-collection:1.0.0
+$ docker push {username}/contact-collection:1.0.0
 
 ```
 
@@ -95,7 +98,7 @@ $ yarn lint:fix
 $ yarn format
 ## docker
 # build
-$ docker build -t nodejs/api-app:1.0.0 .
+$ docker build -t api-app:1.0.0 .
 # run
-$ docker run -d -p 4003:4003 nodejs/api-app:1.0.0
+$ docker run -d -p 4003:4003 api-app:1.0.0
 ```
