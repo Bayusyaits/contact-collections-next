@@ -5,6 +5,17 @@ pipeline {
         }
     }
     stages {
+        stage('verify plugin') {
+            steps {
+              sh '''
+                docker version
+                docker info
+                docker compose version
+                curl --version
+                jq --version
+              '''
+            }
+        }
         stage('load env') {
             steps {
                 echo " =========== ^^^^^^^^^^^^ Load ENV "
@@ -12,9 +23,7 @@ pipeline {
         }
         stage('build') {
             steps {
-                script {
-                    sh "docker-compose up -d"
-                }
+                echo " =========== ^^^^^^^^^^^^ Build "
             }
         }
         stage('prepare') {
